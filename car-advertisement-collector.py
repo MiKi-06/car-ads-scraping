@@ -55,8 +55,7 @@ try:
                         title TEXT NOT NULL,
                         milage TEXT,
                         price TEXT,
-                        link TEXT);""")
-      conn.commit()
+                        link TEXT UNIQUE);""")
 
       # Finds and inserts ads information into xlsx and database
       for i, article in enumerate(articles):
