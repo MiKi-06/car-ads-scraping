@@ -62,11 +62,11 @@ try:
         title = article.find_element(By.CSS_SELECTOR, title_selector).text
         link = article.find_element(By.TAG_NAME, "a").get_attribute("href")
         price = article.find_element(By.CSS_SELECTOR, price_selector).text
-        condition = article.find_element(By.CSS_SELECTOR, "span[dir='ltr']").text
+        milage = article.find_element(By.CSS_SELECTOR, "span[dir='ltr']").text
         cursor.execute("""INSERT INTO ads(title, milage, price, link)
-                          VALUES(?, ?, ?, ?);""", (title, condition, price, link))
+                          VALUES(?, ?, ?, ?);""", (title, milage, price, link))
         sheet[f"A{i+2}"] = title
-        sheet[f"B{i+2}"] = condition
+        sheet[f"B{i+2}"] = milage
         sheet[f"C{i+2}"] = price
         sheet[f"D{i+2}"] = link
   except sqlite3.OperationalError as e:
