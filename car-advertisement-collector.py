@@ -55,5 +55,5 @@ try:
 
   time.sleep(10)
 finally:
-  wb.save(r"car-advertisement-collector\\advertisments.xlsx")
+  wb.save(r"output\\ads.xlsx")
   driver.quit()
