@@ -45,19 +45,22 @@ try:
   sheet["C1"] = "Price"
   sheet["D1"] = "Link"
 
-  # Finds and inserts ads information into xlsx and database
   try:
+    # Connecting to database
     with sqlite3.connect(r"output\\bama_scraping.db") as conn:
+      cursor = conn.cursor()
+      # DATA TYPES NEED TO BE CHANGED IN FUTURE
+      cursor.execute("""CREATE TABLE IF NOT EXISTS ads (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        title TEXT NOT NULL,
+                        milage TEXT,
+                        price TEXT,
+                        link TEXT);""")
+      conn.commit()
+
+      # Finds and inserts ads information into xlsx and database
       for i, article in enumerate(articles):
-        cursor = conn.cursor()
-        # DATA TYPES NEED TO BE CHANGED IN FUTURE
-        cursor.execute("""CREATE TABLE IF NOT EXISTS ads (
-                       id INTEGER PRIMARY KEY AUTOINCREMENT,
-                       title TEXT NOT NULL,
-                       milage TEXT,
-                       price TEXT,
-                       link TEXT UNIQUE);""")
-        conn.commit()
+        
         # Finds the elements
         title = article.find_element(By.CSS_SELECTOR, title_selector).text
         link = article.find_element(By.TAG_NAME, "a").get_attribute("href")
