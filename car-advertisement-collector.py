@@ -2,7 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from openpyxl import Workbook
 import sqlite3
-import shutil
+import re
 import time
 
 def scroll_to_bottom(driver, pause_time=2, max_attempts = 5):
@@ -24,6 +24,14 @@ def scroll_to_bottom(driver, pause_time=2, max_attempts = 5):
       
     attempt +=1
     last_height = new_height
+
+def get_digit(string_data):
+  try:
+    digit = int(re.sub(r"[^\d]", "", string_data))
+    return digit
+  except ValueError:
+    return 0
+
 
 wb = Workbook()
 URL = "https://bama.ir/car/all/fars-shiraz?installment=0&price=300000000,1500000000&body=passenger_car"
@@ -53,8 +61,8 @@ try:
       cursor.execute("""CREATE TABLE IF NOT EXISTS ads (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         title TEXT NOT NULL,
-                        milage TEXT,
-                        price TEXT,
+                        milage INTEGER,
+                        price INTEGER,
                         link TEXT UNIQUE);""")
 
       # Finds and inserts ads information into xlsx and database
@@ -65,6 +73,10 @@ try:
           link = article.find_element(By.TAG_NAME, "a").get_attribute("href")
           price = article.find_element(By.CSS_SELECTOR, price_selector).text
           milage = article.find_element(By.CSS_SELECTOR, "span[dir='ltr']").text
+          
+          price = get_digit(price)
+          milage = get_digit(milage)
+
           cursor.execute("""INSERT OR IGNORE INTO ads(title, milage, price, link)
                             VALUES(?, ?, ?, ?);""", (title, milage, price, link))
         except Exception as e:
