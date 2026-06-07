@@ -59,18 +59,22 @@ try:
 
       # Finds and inserts ads information into xlsx and database
       for i, article in enumerate(articles):
-        
-        # Finds the elements
-        title = article.find_element(By.CSS_SELECTOR, title_selector).text
-        link = article.find_element(By.TAG_NAME, "a").get_attribute("href")
-        price = article.find_element(By.CSS_SELECTOR, price_selector).text
-        milage = article.find_element(By.CSS_SELECTOR, "span[dir='ltr']").text
-        cursor.execute("""INSERT OR IGNORE INTO ads(title, milage, price, link)
-                          VALUES(?, ?, ?, ?);""", (title, milage, price, link))
+        try:
+          # Finds the elements
+          title = article.find_element(By.CSS_SELECTOR, title_selector).text
+          link = article.find_element(By.TAG_NAME, "a").get_attribute("href")
+          price = article.find_element(By.CSS_SELECTOR, price_selector).text
+          milage = article.find_element(By.CSS_SELECTOR, "span[dir='ltr']").text
+          cursor.execute("""INSERT OR IGNORE INTO ads(title, milage, price, link)
+                            VALUES(?, ?, ?, ?);""", (title, milage, price, link))
+        except Exception as e:
+          print(f"Error in article {i}: {e}")
+          continue
         sheet[f"A{i+2}"] = title
         sheet[f"B{i+2}"] = milage
         sheet[f"C{i+2}"] = price
         sheet[f"D{i+2}"] = link
+        
   except sqlite3.OperationalError as e:
     print(e)
     pass
