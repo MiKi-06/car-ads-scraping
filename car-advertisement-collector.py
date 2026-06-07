@@ -66,7 +66,7 @@ try:
         link = article.find_element(By.TAG_NAME, "a").get_attribute("href")
         price = article.find_element(By.CSS_SELECTOR, price_selector).text
         milage = article.find_element(By.CSS_SELECTOR, "span[dir='ltr']").text
-        cursor.execute("""INSERT INTO ads(title, milage, price, link)
+        cursor.execute("""INSERT OR IGNORE INTO ads(title, milage, price, link)
                           VALUES(?, ?, ?, ?);""", (title, milage, price, link))
         sheet[f"A{i+2}"] = title
         sheet[f"B{i+2}"] = milage
@@ -80,6 +80,5 @@ try:
   #
   time.sleep(10)
 finally:
-  conn.close()
   wb.save(r"output\\ads.xlsx")
   driver.quit()
