@@ -64,7 +64,7 @@ wb = Workbook()
 URL = "https://bama.ir/car/all/fars-shiraz?installment=0&price=300000000,1500000000&body=passenger_car"
 title_selector = "div.inline-flex.mb-1 span.text-neutral-10"
 price_selector = 'p.flex.items-center.justify-end.gap-1'
-date_selector = "//span[contains(@class, 'inline-block') and contains(@class, 'text-right') and contains(@class, 'w-full') and contains(@class, 'text-xs')]"
+#date_container_selector = ".//div[contains(@class,'pt-2') and .//*[name()='svg']]"
 try:
   driver = webdriver.Edge()
   driver.get(URL)
@@ -101,9 +101,31 @@ try:
           link = article.find_element(By.TAG_NAME, "a").get_attribute("href")
           price = article.find_element(By.CSS_SELECTOR, price_selector).text
           milage = article.find_element(By.CSS_SELECTOR, "span[dir='ltr']").text
-          date = article.find_element(By.XPATH, date_selector).text
+          #date_container = article.find_element(By.XPATH, ".//div[contains(@class,'pt-2') and .//*[name()='svg']]")
+          #date = date_container.find_elements(By.TAG_NAME, "span")[1].text
           price = get_digit(price)
           milage = get_digit(milage)
+
+          spans = article.find_elements(By.TAG_NAME, "span")
+
+          date = None
+
+          for span in spans:
+              text = span.text.strip()
+
+              if (
+                  "لحظاتی پیش" in text
+                  or "دیروز" in text
+                  or "ساعت پیش" in text
+                  or "روز پیش" in text
+                  or re.match(r"^\d{4}/\d{1,2}/\d{1,2}$", fa_to_en(text))
+              ):
+                  date = text
+                  break
+
+          if date is None:
+              date = "لحظاتی پیش"
+
           date = get_date(date)
           cursor.execute("""INSERT OR IGNORE INTO ads(title, milage, price, link, date, source)
                             VALUES(?, ?, ?, ?, ?, ?);""", (title, milage, price, link, date, "bama"))
