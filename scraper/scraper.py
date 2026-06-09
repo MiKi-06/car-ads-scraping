@@ -1,7 +1,6 @@
 from database import Database
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from openpyxl import Workbook
 import re
 from jdatetime import datetime, timedelta
 import time
@@ -60,7 +59,7 @@ def get_date(date):
       return (now - timedelta(days=offset)).strftime("%Y-%m-%d %H:%M:%S")
     return now.strftime("%Y-%m-%d %H:%M:%S")
     
-wb = Workbook()
+#wb = Workbook()
 URL = "https://bama.ir/car/all/fars-shiraz?installment=0&price=300000000,1500000000&body=passenger_car"
 title_selector = "div.inline-flex.mb-1 span.text-neutral-10"
 price_selector = 'p.flex.items-center.justify-end.gap-1'
@@ -72,12 +71,12 @@ try:
   # Gets ads containers
   articles = driver.find_elements(By.TAG_NAME, "article")
   # Sets up the xlsx sheet
-  sheet = wb.active
-  sheet.title = 'CAR ads Data'
-  sheet["A1"] = "Title"
-  sheet["B1"] = "Condition"
-  sheet["C1"] = "Price"
-  sheet["D1"] = "Link"
+  #sheet = wb.active
+  #sheet.title = 'CAR ads Data'
+  #sheet["A1"] = "Title"
+  #sheet["B1"] = "Condition"
+  #sheet["C1"] = "Price"
+  #sheet["D1"] = "Link"
 
     # Connecting to database
   db = Database()
@@ -111,18 +110,20 @@ try:
 
       if date is None:
           date = "لحظاتی پیش"
-
       date = get_date(date)
+
       db.sqlite_submit_records(title, link, price, milage, date, "bama")
+      db.excel_submit_records(i, title, link, price, milage, date, "bama")
     except Exception as e:
       print(f"Error in article {i}: {e}")
       continue
-    sheet[f"A{i+2}"] = title
-    sheet[f"B{i+2}"] = milage
-    sheet[f"C{i+2}"] = price
-    sheet[f"D{i+2}"] = link
+    #sheet[f"A{i+2}"] = title
+    #sheet[f"B{i+2}"] = milage
+    #sheet[f"C{i+2}"] = price
+    #sheet[f"D{i+2}"] = link
   
   time.sleep(5)
 finally:
-  wb.save(r".\\output\\ads.xlsx")
+  db.excel_save()
+  db.sqlite_save()
   driver.quit()

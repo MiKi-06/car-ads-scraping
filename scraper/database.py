@@ -1,12 +1,24 @@
 import sqlite3
-
+from openpyxl import Workbook
 class Database():
   def __init__(self):
     try:
       with sqlite3.connect(r".\\output\\bama_scraping.db") as conn:
         self.cursor = conn.cursor()
         self.make_table()
+        self.connect = conn
     except sqlite3.OperationalError as e:
+      print(e)
+    try:
+      self.wb = Workbook()
+      self.sheet = self.wb.active
+      self.sheet.title = 'CAR ads Data'
+      self.sheet["A1"] = "Title"
+      self.sheet["B1"] = "Condition"
+      self.sheet["C1"] = "Price"
+      self.sheet["D1"] = "Link"
+      self.sheet["E1"] = "Source"
+    except Exception as e:
       print(e)
   def make_table(self):
     # Table init
@@ -24,10 +36,21 @@ class Database():
     try:
       # Record insertion
       self.cursor.execute("""INSERT OR IGNORE INTO ads(title, milage, price, link, date, source)
-                              VALUES(?, ?, ?, ?, ?, ?);""", (title, milage, price, link, date, "bama"))
+                              VALUES(?, ?, ?, ?, ?, ?);""", (title, milage, price, link, date, source))
       
     except sqlite3.OperationalError as e:
       print(e)
 
-  def excel_submit_records():
-    pass
+  def sqlite_save(self):
+    self.connect.commit()
+
+  def excel_submit_records(self, i, title, link, price, milage, date, source):
+    self.sheet[f"A{i+2}"] = title
+    self.sheet[f"B{i+2}"] = milage
+    self.sheet[f"C{i+2}"] = price
+    self.sheet[f"D{i+2}"] = link
+    self.sheet[f"E{i+2}"] = date
+    self.sheet[f"F{i+2}"] = source
+
+  def excel_save(self):
+    self.wb.save(r".\\output\\ads.xlsx")
