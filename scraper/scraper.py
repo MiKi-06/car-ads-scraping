@@ -53,10 +53,14 @@ try:
       db.sqlite_submit_records(title, link, price, milage, date, "bama")
       db.excel_submit_records(i, title, link, price, milage, date, "bama")
       db.avg_by_models()
+      db.highest_price_by_models()
+      db.lowest_price_by_models()
+      db.expensive_cars()
+      db.cheapest_cars()
     except Exception as e:
       print(f"Error in article {i}: {e}")
       continue
-  time.sleep(5)
+  time.sleep(1)
 finally:
   db.excel_save()
   db.sqlite_save()

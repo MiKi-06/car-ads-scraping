@@ -32,17 +32,78 @@ class Database():
                       source TEXT);""")
 
   def avg_by_models(self):
-    pass
+    
     self.cursor.execute("""CREATE TABLE IF NOT EXISTS avg_price_by_models(
                         model TEXT PRIMARY KEY,
-                        avg_price REAL
+                        avg_price REAL,
+                        link TEXT
                         );""")
     self.cursor.execute("""INSERT OR REPLACE INTO avg_price_by_models(
-                        model, avg_price)
-                        SELECT title, AVG((price))
+                        model, avg_price, link)
+                        SELECT title, AVG((price)), link
                         FROM ads
                         WHERE price IS NOT NULL
                         GROUP BY title;""")
+    self.connect.commit()
+
+  def highest_price_by_models(self):
+    self.cursor.execute("""CREATE TABLE IF NOT EXISTS highest_price_by_models(
+                        model TEXT PRIMARY KEY,
+                        highest_price REAL,
+                        link TEXT
+                        );""")
+    self.cursor.execute("""INSERT OR REPLACE INTO highest_price_by_models(
+                        model, highest_price, link)
+                        SELECT title, MAX((price)), link
+                        FROM ads
+                        GROUP BY title
+                        ORDER by price DESC;""")
+    self.connect.commit()
+
+  def lowest_price_by_models(self):
+    self.cursor.execute("""CREATE TABLE IF NOT EXISTS lowest_price_by_models(
+                        model TEXT PRIMARY KEY,
+                        lowest_price REAL,
+                        link TEXT
+                        );""")
+    self.cursor.execute("""INSERT OR REPLACE INTO lowest_price_by_models(
+                        model, lowest_price, link)
+                        SELECT title, MIN((price)), link
+                        FROM ads
+                        GROUP BY title
+                        ORDER by price ASC;""")
+    self.connect.commit()
+
+  def expensive_cars(self):
+    self.cursor.execute("""CREATE TABLE IF NOT EXISTS expensive_cars(
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        model TEXT,
+                        price REAL,
+                        link TEXT
+                        );""")
+    self.cursor.execute("""DELETE FROM expensive_cars;""")
+    self.cursor.execute("""INSERT INTO expensive_cars(model, price, link)
+                        SELECT title, price, link
+                        FROM ads
+                        WHERE price IS NOT NULL
+                        ORDER BY price DESC
+                        LIMIT 5;""")
+    self.connect.commit()
+    
+  def cheapest_cars(self):
+    self.cursor.execute("""CREATE TABLE IF NOT EXISTS cheapest_cars (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        model TEXT,
+                        price REAL,
+                        link TEXT);""")
+    self.cursor.execute("""DELETE FROM cheapest_cars;""")
+    self.cursor.execute("""INSERT INTO cheapest_cars(
+                        model, price, link)
+                        SELECT title, price, link
+                        FROM ads
+                        WHERE price IS NOT NULL
+                        ORDER by price ASC
+                        LIMIT 5;""")
     self.connect.commit()
 
   def sqlite_submit_records(self, title, link, price, milage, date, source):
