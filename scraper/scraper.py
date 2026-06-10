@@ -24,7 +24,6 @@ def scroll_to_bottom(driver, pause_time=2, max_attempts = 5):
     attempt +=1
     last_height = new_height
 
-#wb = Workbook()
 URL = "https://bama.ir/car/all/fars-shiraz?installment=0&price=300000000,1500000000&body=passenger_car"
 title_selector = "div.inline-flex.mb-1 span.text-neutral-10"
 price_selector = 'p.flex.items-center.justify-end.gap-1'
@@ -35,9 +34,9 @@ try:
   scroll_to_bottom(driver= driver)
   # Gets ads containers
   articles = driver.find_elements(By.TAG_NAME, "article")
-    # Connecting to database
+  # Connecting to database
   db = Database()
-    # Finds and inserts ads information into xlsx and database
+  # Finds and inserts ads information into xlsx and database
   for i, article in enumerate(articles):
     try:
       # Finds the elements
