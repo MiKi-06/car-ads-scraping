@@ -31,6 +31,19 @@ class Database():
                       date TEXT,
                       source TEXT);""")
 
+  def avg_by_models(self):
+    pass
+    self.cursor.execute("""CREATE TABLE IF NOT EXISTS avg_price_by_models(
+                        model TEXT PRIMARY KEY,
+                        avg_price REAL
+                        );""")
+    self.cursor.execute("""INSERT OR REPLACE INTO avg_price_by_models(
+                        model, avg_price)
+                        SELECT title, AVG((price))
+                        FROM ads
+                        WHERE price IS NOT NULL
+                        GROUP BY title;""")
+    self.connect.commit()
 
   def sqlite_submit_records(self, title, link, price, milage, date, source):
     try:

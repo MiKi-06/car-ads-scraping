@@ -52,6 +52,7 @@ try:
 
       db.sqlite_submit_records(title, link, price, milage, date, "bama")
       db.excel_submit_records(i, title, link, price, milage, date, "bama")
+      db.avg_by_models()
     except Exception as e:
       print(f"Error in article {i}: {e}")
       continue
