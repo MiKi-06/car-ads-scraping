@@ -5,7 +5,7 @@ class Database():
       self.conn = sqlite3.connect(r".\\output\\bama_scraping.db")
       self.cursor = self.conn.cursor()
       self.make_table()
-      self.connect = self.conn
+      self.conn.row_factory = sqlite3.Row
     except sqlite3.OperationalError as e:
       print(e)
 
@@ -33,7 +33,7 @@ class Database():
                         FROM ads
                         WHERE price IS NOT NULL
                         GROUP BY title;""")
-    self.connect.commit()
+    self.conn.commit()
 
   def get_ads(self, model="رنو، تندر 90"):
     self.cursor.execute("""SELECT * FROM ads
@@ -49,7 +49,7 @@ class Database():
     rows = self.cursor.fetchall()
     if not rows:
       return None
-    prices = [row[0] for row in rows if rows[0] is not None]
+    prices = [row["price"] for row in rows if rows["price"] is not None]
     return prices
   
   def highest_price_by_models(self):
@@ -64,7 +64,7 @@ class Database():
                         FROM ads
                         GROUP BY title
                         ORDER by price DESC;""")
-    self.connect.commit()
+    self.conn.commit()
 
   def lowest_price_by_models(self):
     self.cursor.execute("""CREATE TABLE IF NOT EXISTS lowest_price_by_models(
@@ -78,7 +78,7 @@ class Database():
                         FROM ads
                         GROUP BY title
                         ORDER by price ASC;""")
-    self.connect.commit()
+    self.conn.commit()
 
   def expensive_cars(self):
     self.cursor.execute("""CREATE TABLE IF NOT EXISTS expensive_cars(
@@ -94,7 +94,7 @@ class Database():
                         WHERE price IS NOT NULL
                         ORDER BY price DESC
                         LIMIT 5;""")
-    self.connect.commit()
+    self.conn.commit()
     
   def cheapest_cars(self):
     self.cursor.execute("""CREATE TABLE IF NOT EXISTS cheapest_cars (
@@ -110,7 +110,7 @@ class Database():
                         WHERE price IS NOT NULL
                         ORDER by price ASC
                         LIMIT 5;""")
-    self.connect.commit()
+    self.conn.commit()
 
   def sqlite_submit_records(self, title, link, price, milage, date, source):
     try:
@@ -122,5 +122,5 @@ class Database():
       print(e)
 
   def close(self):
-    self.connect.commit()
+    self.conn.commit()
     self.conn.close()

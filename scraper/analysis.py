@@ -5,7 +5,7 @@ def analyze_market(model="رنو، تندر 90"):
   db = Database()
   try:
     ads = db.get_ads(model)
-    prices = [row[3] for row in ads]
+    prices = [row["price"] for row in ads]
     count = len(prices)
     med_price = median(prices)
     total = sum(prices)
@@ -13,14 +13,14 @@ def analyze_market(model="رنو، تندر 90"):
     lowest = min(prices)
     average = (total // count)
 
-    print({
+    good_deals = find_good_deals(ads, med_price, model)
+    return{
       "count": count,
       "median": med_price,
       "highest": highest,
       "lowest": lowest,
       "average": average
-    })
-    find_good_deals(ads, med_price, model)
+    }, good_deals
   except Exception as e:
     print(e)
   finally:
@@ -29,9 +29,12 @@ def analyze_market(model="رنو، تندر 90"):
 def find_good_deals(ads, med_price = None, model="رنو، تندر 90"):
   good_deals = []
   if not med_price:
-    prices = [row[3] for row in ads]
+    prices = [row["price"] for row in ads]
     med_price = median(prices)
   for ad in ads:
-    if ad[3] < (med_price * 0.9):
-      good_deals.append(ad)
-  print(good_deals)
+    if ad["price"] < (med_price * 0.9):
+      good_deals.append({"title": ad["title"],
+                        "price": ad["price"],
+                        "difference": med_price - ad["price"],
+                        "link": ad["link"]})
+  return good_deals
