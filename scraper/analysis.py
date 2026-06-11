@@ -4,7 +4,8 @@ from database import Database
 def analyze_market(model="رنو، تندر 90"):
   db = Database()
   try:
-    prices = db.get_prices(model)
+    ads = db.get_ads(model)
+    prices = [row[2] for row in prices]
     count = len(prices)
     med_price = median(prices)
     total = sum(prices)
@@ -23,3 +24,6 @@ def analyze_market(model="رنو، تندر 90"):
     print(e)
   finally:
     db.close()
+
+def find_good_deals(model="رنو، تندر 90"):
+  pass
