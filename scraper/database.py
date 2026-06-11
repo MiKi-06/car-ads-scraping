@@ -1,5 +1,4 @@
 import sqlite3
-from openpyxl import Workbook
 class Database():
   def __init__(self):
     try:
@@ -9,17 +8,7 @@ class Database():
       self.connect = self.conn
     except sqlite3.OperationalError as e:
       print(e)
-    try:
-      self.wb = Workbook()
-      self.sheet = self.wb.active
-      self.sheet.title = 'CAR ads Data'
-      self.sheet["A1"] = "Title"
-      self.sheet["B1"] = "Condition"
-      self.sheet["C1"] = "Price"
-      self.sheet["D1"] = "Link"
-      self.sheet["E1"] = "Source"
-    except Exception as e:
-      print(e)
+
   def make_table(self):
     # Table init
     self.cursor.execute("""CREATE TABLE IF NOT EXISTS ads (
@@ -118,14 +107,3 @@ class Database():
   def close(self):
     self.connect.commit()
     self.conn.close()
-
-  def excel_submit_records(self, i, title, link, price, milage, date, source):
-    self.sheet[f"A{i+2}"] = title
-    self.sheet[f"B{i+2}"] = milage
-    self.sheet[f"C{i+2}"] = price
-    self.sheet[f"D{i+2}"] = link
-    self.sheet[f"E{i+2}"] = date
-    self.sheet[f"F{i+2}"] = source
-
-  def excel_save(self):
-    self.wb.save(r".\\output\\ads.xlsx")

@@ -1,4 +1,5 @@
 from database import Database
+from excel_exporter import Excelexporter
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 import time
@@ -36,6 +37,7 @@ try:
   articles = driver.find_elements(By.TAG_NAME, "article")
   # Connecting to database
   db = Database()
+  ex = Excelexporter()
   # Finds and inserts ads information into xlsx and database
   for i, article in enumerate(articles):
     try:
@@ -51,7 +53,7 @@ try:
       date = utils.date_finder(spans)
 
       db.sqlite_submit_records(title, link, price, milage, date, "bama")
-      db.excel_submit_records(i, title, link, price, milage, date, "bama")
+      ex.excel_submit_records(i, title, link, price, milage, date, "bama")
       db.avg_by_models()
       db.highest_price_by_models()
       db.lowest_price_by_models()
@@ -62,6 +64,6 @@ try:
       continue
   time.sleep(1)
 finally:
-  db.excel_save()
+  ex.close()
   db.close()
   driver.quit()
