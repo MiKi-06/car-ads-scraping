@@ -3,9 +3,9 @@ class Database():
   def __init__(self):
     try:
       self.conn = sqlite3.connect(r".\\output\\bama_scraping.db")
+      self.conn.row_factory = sqlite3.Row
       self.cursor = self.conn.cursor()
       self.make_table()
-      self.conn.row_factory = sqlite3.Row
     except sqlite3.OperationalError as e:
       print(e)
 

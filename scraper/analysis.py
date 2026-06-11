@@ -12,8 +12,8 @@ def analyze_market(model="رنو، تندر 90"):
     highest = max(prices)
     lowest = min(prices)
     average = (total // count)
-
-    good_deals = find_good_deals(ads, med_price, model)
+    good_deals = find_good_deals(ads, med_price)
+    
     return{
       "count": count,
       "median": med_price,
@@ -26,7 +26,7 @@ def analyze_market(model="رنو، تندر 90"):
   finally:
     db.close()
 
-def find_good_deals(ads, med_price = None, model="رنو، تندر 90"):
+def find_good_deals(ads, med_price = None):
   good_deals = []
   if not med_price:
     prices = [row["price"] for row in ads]
