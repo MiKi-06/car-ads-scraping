@@ -5,7 +5,7 @@ def analyze_market(model="رنو، تندر 90"):
   db = Database()
   try:
     ads = db.get_ads(model)
-    prices = [row[2] for row in ads]
+    prices = [row[3] for row in ads]
     count = len(prices)
     med_price = median(prices)
     total = sum(prices)
