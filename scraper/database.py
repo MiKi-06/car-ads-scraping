@@ -35,17 +35,15 @@ class Database():
                         GROUP BY title;""")
     self.connect.commit()
 
-  def average_price(self, model= "رنو، تندر 90"):
-    pass
+  def get_prices(self, model= "رنو، تندر 90"):
     self.cursor.execute("""SELECT price FROM ads
                         WHERE title = ? AND price IS NOT NULL""", (model,))
     rows = self.cursor.fetchall()
     if not rows:
       return None
-    
-    avg_price = (sum([row[0] for row in rows]) // len(rows))
-    return avg_price
-
+    prices = [row[0] for row in rows if rows[0] is not None]
+    return prices
+  
   def highest_price_by_models(self):
     self.cursor.execute("""CREATE TABLE IF NOT EXISTS highest_price_by_models(
                         model TEXT PRIMARY KEY,

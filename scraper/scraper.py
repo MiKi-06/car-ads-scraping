@@ -1,4 +1,5 @@
 from database import Database
+import analysis
 from excel_exporter import Excelexporter
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -54,7 +55,6 @@ try:
 
       db.sqlite_submit_records(title, link, price, milage, date, "bama")
       ex.excel_submit_records(i, title, link, price, milage, date, "bama")
-      print(db.average_price())
       db.highest_price_by_models()
       db.lowest_price_by_models()
       db.expensive_cars()
@@ -63,7 +63,9 @@ try:
       print(f"Error in article {i}: {e}")
       continue
   time.sleep(1)
+  
 finally:
   ex.close()
   db.close()
+  analysis.analyze_market()
   driver.quit()
