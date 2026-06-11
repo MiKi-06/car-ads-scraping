@@ -49,7 +49,7 @@ class Database():
     rows = self.cursor.fetchall()
     if not rows:
       return None
-    prices = [row["price"] for row in rows if rows["price"] is not None]
+    prices = [row["price"] for row in rows if row["price"] is not None]
     return prices
   
   def highest_price_by_models(self):

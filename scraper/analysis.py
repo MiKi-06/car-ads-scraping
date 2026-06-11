@@ -26,13 +26,13 @@ def analyze_market(model="رنو، تندر 90"):
   finally:
     db.close()
 
-def find_good_deals(ads, med_price = None):
+def find_good_deals(ads, med_price = None, thereshold= 0.9):
   good_deals = []
   if not med_price:
     prices = [row["price"] for row in ads]
     med_price = median(prices)
   for ad in ads:
-    if ad["price"] < (med_price * 0.9):
+    if ad["price"] < (med_price * thereshold):
       good_deals.append({"title": ad["title"],
                         "price": ad["price"],
                         "difference": med_price - ad["price"],
