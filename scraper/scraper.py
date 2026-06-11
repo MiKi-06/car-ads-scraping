@@ -54,7 +54,7 @@ try:
 
       db.sqlite_submit_records(title, link, price, milage, date, "bama")
       ex.excel_submit_records(i, title, link, price, milage, date, "bama")
-      db.avg_by_models()
+      print(db.average_price())
       db.highest_price_by_models()
       db.lowest_price_by_models()
       db.expensive_cars()
