@@ -3,10 +3,10 @@ from openpyxl import Workbook
 class Database():
   def __init__(self):
     try:
-      with sqlite3.connect(r".\\output\\bama_scraping.db") as conn:
-        self.cursor = conn.cursor()
-        self.make_table()
-        self.connect = conn
+      self.conn = sqlite3.connect(r".\\output\\bama_scraping.db")
+      self.cursor = self.conn.cursor()
+      self.make_table()
+      self.connect = self.conn
     except sqlite3.OperationalError as e:
       print(e)
     try:
@@ -115,8 +115,9 @@ class Database():
     except sqlite3.OperationalError as e:
       print(e)
 
-  def sqlite_save(self):
+  def close(self):
     self.connect.commit()
+    self.conn.close()
 
   def excel_submit_records(self, i, title, link, price, milage, date, source):
     self.sheet[f"A{i+2}"] = title

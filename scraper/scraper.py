@@ -63,5 +63,5 @@ try:
   time.sleep(1)
 finally:
   db.excel_save()
-  db.sqlite_save()
+  db.close()
   driver.quit()
