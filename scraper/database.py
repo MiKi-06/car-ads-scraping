@@ -35,6 +35,13 @@ class Database():
                         GROUP BY title;""")
     self.connect.commit()
 
+  def get_ads(self, model="رنو، تندر 90"):
+    self.cursor.execute("""SELECT * FROM ads
+                        WHERE title = ? AND price IS NOT NULL""", (model,))
+    rows = self.cursor.fetchall()
+    if not rows:
+      return None
+    return rows
   def get_prices(self, model= "رنو، تندر 90"):
     self.cursor.execute("""SELECT price FROM ads
                         WHERE title = ? AND price IS NOT NULL""", (model,))

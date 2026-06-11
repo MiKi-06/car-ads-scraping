@@ -11,9 +11,7 @@ def analyze_market(model="رنو، تندر 90"):
     highest = max(prices)
     lowest = min(prices)
     average = (total // count)
-  except Exception as e:
-    print(e)
-  finally:
+
     print({
       "count": count,
       "median": med_price,
@@ -21,4 +19,7 @@ def analyze_market(model="رنو، تندر 90"):
       "lowest": lowest,
       "average": average
     })
+  except Exception as e:
+    print(e)
+  finally:
     db.close()
