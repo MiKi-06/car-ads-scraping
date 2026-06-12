@@ -121,6 +121,54 @@ class Database():
     except sqlite3.OperationalError as e:
       print(e)
 
+  def insert_into(self, table, values):
+    self.cursor.execute(f"""CREATE TABLE IF NOT EXISTS {table} (
+                      id INTEGER PRIMARY KEY AUTOINCREMENT,
+                      title TEXT NOT NULL,
+                      milage INTEGER,
+                      price INTEGER,
+                      link TEXT UNIQUE,
+                      date TEXT,
+                      source TEXT);""")
+    if not isinstance(values, (list, tuple, set)):
+      values = [values]
+    for value in values:
+      self.cursor.execute(
+  f"""
+  INSERT OR REPLACE INTO {table}
+  (id, title, milage, price, link, date, source)
+  VALUES (?, ?, ?, ?, ?, ?, ?)
+  """,
+  (
+      value["id"],
+      value["title"],
+      value["milage"],
+      value["price"],
+      value["link"],
+      value["date"],
+      value["source"],
+  ),
+)
+      self.close()
+      return
+    self.cursor.execute(
+    f"""
+    INSERT OR REPLACE INTO {table}
+    (id, title, milage, price, link, date, source)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+    """,
+    (
+        value["id"],
+        value["title"],
+        value["milage"],
+        value["price"],
+        value["link"],
+        value["date"],
+        value["source"],
+    ),
+)
+    self.close()
+
   def close(self):
     self.conn.commit()
     self.conn.close()
