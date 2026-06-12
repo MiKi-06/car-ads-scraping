@@ -130,44 +130,23 @@ class Database():
                       link TEXT UNIQUE,
                       date TEXT,
                       source TEXT);""")
-    if not isinstance(values, (list, tuple, set)):
-      values = [values]
     for value in values:
       self.cursor.execute(
-  f"""
-  INSERT OR REPLACE INTO {table}
-  (id, title, milage, price, link, date, source)
-  VALUES (?, ?, ?, ?, ?, ?, ?)
-  """,
-  (
-      value["id"],
-      value["title"],
-      value["milage"],
-      value["price"],
-      value["link"],
-      value["date"],
-      value["source"],
-  ),
-)
-      self.close()
-      return
-    self.cursor.execute(
-    f"""
-    INSERT OR REPLACE INTO {table}
-    (id, title, milage, price, link, date, source)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-    """,
-    (
-        value["id"],
-        value["title"],
-        value["milage"],
-        value["price"],
-        value["link"],
-        value["date"],
-        value["source"],
-    ),
-)
-    self.close()
+                        f"""
+                        INSERT OR REPLACE INTO {table}
+                        (id, title, milage, price, link, date, source)
+                        VALUES (?, ?, ?, ?, ?, ?, ?)
+                        """,
+                        (
+                            value["id"],
+                            value["title"],
+                            value["milage"],
+                            value["price"],
+                            value["link"],
+                            value["date"],
+                            value["source"],
+                        ),
+                      )
 
   def close(self):
     self.conn.commit()

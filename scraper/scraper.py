@@ -1,5 +1,5 @@
 from database import Database
-import analysis
+from analysis import Analyzer
 from excel_exporter import Excelexporter
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -36,9 +36,10 @@ try:
   scroll_to_bottom(driver= driver)
   # Gets ads containers
   articles = driver.find_elements(By.TAG_NAME, "article")
-  # Connecting to database
+  # Connecting to database and accessing modules
   db = Database()
   ex = Excelexporter()
+  analyzer = Analyzer()
   # Finds and inserts ads information into xlsx and database
   for i, article in enumerate(articles):
     try:
@@ -67,5 +68,5 @@ try:
 finally:
   ex.close()
   db.close()
-  analysis.analyze_market()
+  analyzer.analyze_market()
   driver.quit()
