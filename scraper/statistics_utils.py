@@ -29,8 +29,8 @@ def get_score(deal, med_price):
 
   return{
     "price": deal_price,
-    "marke_price": med_price,
-    "percent": diff_percent,
+    "market_price": int(med_price),
+    "percent": float(diff_percent),
     "score": score
   }
 
