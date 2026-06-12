@@ -2,9 +2,9 @@ from statistics import median
 from database import Database
 from statistics_utils import remove_outliers, get_score
 
-class Analyzer():
-  def __init__(self):
-    self.db = Database()
+class Analyzer:
+  def __init__(self, db):
+    self.db = db
 
   def analyze_market(self, model="رنو، تندر 90"):
     try:
@@ -21,12 +21,15 @@ class Analyzer():
       good_deals = self.find_good_deals(ads, med_price)
       
       return{
-        "count": count,
-        "median": med_price,
-        "highest": highest,
-        "lowest": lowest,
-        "average": average
-      }, good_deals
+        "statistics": {
+                      "count": count,
+                      "median": med_price,
+                      "highest": highest,
+                      "lowest": lowest,
+                      "average": average
+                      },
+        "good_deals": good_deals
+      } 
     except Exception as e:
       print(e)
     finally:

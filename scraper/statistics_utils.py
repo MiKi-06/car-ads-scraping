@@ -15,8 +15,8 @@ def remove_outliers(prices):
 
 def get_score(deal, med_price):
   deal_price = deal["price"]
-  difference = med_price - deal_price
-  diff_percent = (difference / med_price) * 100
+  difference = deal_price - med_price
+  diff_percent = ((deal_price - med_price) / med_price) * 100
   diff_percent = round(diff_percent, 2)
   if diff_percent <= -11.4:
     score = f"Excellent 🟢 {diff_percent}"
@@ -28,8 +28,11 @@ def get_score(deal, med_price):
     score = f"Slightly Expensive 🟠 {diff_percent}"
 
   return{
+    "title": deal["title"],
+    "link": deal["link"],
     "price": deal_price,
     "market_price": int(med_price),
+    "difference": difference,
     "percent": float(diff_percent),
     "score": score
   }
