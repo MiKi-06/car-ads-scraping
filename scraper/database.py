@@ -13,7 +13,7 @@ class Database():
     # Table init
     self.cursor.execute("""CREATE TABLE IF NOT EXISTS ads (
                       id INTEGER PRIMARY KEY AUTOINCREMENT,
-                      title TEXT NOT NULL,
+                      model TEXT NOT NULL,
                       milage INTEGER,
                       price INTEGER,
                       link TEXT UNIQUE,
@@ -45,7 +45,7 @@ class Database():
   
   def get_prices(self, model= "رنو، تندر 90"):
     self.cursor.execute("""SELECT price FROM ads
-                        WHERE title = ? AND price IS NOT NULL""", (model,))
+                        WHERE model = ? AND price IS NOT NULL""", (model,))
     rows = self.cursor.fetchall()
     if not rows:
       return None
@@ -89,7 +89,7 @@ class Database():
                         );""")
     self.cursor.execute("""DELETE FROM expensive_cars;""")
     self.cursor.execute("""INSERT INTO expensive_cars(model, price, link)
-                        SELECT title, price, link
+                        SELECT model, price, link
                         FROM ads
                         WHERE price IS NOT NULL
                         ORDER BY price DESC
@@ -112,11 +112,11 @@ class Database():
                         LIMIT 5;""")
     self.conn.commit()
 
-  def sqlite_submit_records(self, title, link, price, milage, date, source):
+  def sqlite_submit_records(self, model, link, price, milage, date, source):
     try:
       # Record insertion
-      self.cursor.execute("""INSERT OR IGNORE INTO ads(title, milage, price, link, date, source)
-                              VALUES(?, ?, ?, ?, ?, ?);""", (title, milage, price, link, date, source))
+      self.cursor.execute("""INSERT OR IGNORE INTO ads(model, milage, price, link, date, source)
+                              VALUES(?, ?, ?, ?, ?, ?);""", (model, milage, price, link, date, source))
       
     except sqlite3.OperationalError as e:
       print(e)
@@ -124,7 +124,7 @@ class Database():
   def insert_into(self, table, values):
     self.cursor.execute(f"""CREATE TABLE IF NOT EXISTS {table} (
                       id INTEGER PRIMARY KEY AUTOINCREMENT,
-                      title TEXT NOT NULL,
+                      model TEXT NOT NULL,
                       milage INTEGER,
                       price INTEGER,
                       link TEXT UNIQUE,
@@ -134,12 +134,12 @@ class Database():
       self.cursor.execute(
                         f"""
                         INSERT OR REPLACE INTO {table}
-                        (id, title, milage, price, link, date, source)
+                        (id, model, milage, price, link, date, source)
                         VALUES (?, ?, ?, ?, ?, ?, ?)
                         """,
                         (
                             value["id"],
-                            value["title"],
+                            value["model"],
                             value["milage"],
                             value["price"],
                             value["link"],
