@@ -1,6 +1,6 @@
 from statistics import median
 from database import Database
-from statistics_utils import remove_outliers
+from statistics_utils import remove_outliers, get_score
 
 class Analyzer():
   def __init__(self):
@@ -40,5 +40,14 @@ class Analyzer():
     for ad in ads:
       if ad["price"] < (med_price * threshold):
         good_deals.append(ad)
+
+    for deal in good_deals:
+      score = get_score(deal, med_price)
+
+      print(score)
+    
     self.db.insert_into("good_deals", good_deals)
     return good_deals
+  
+  def market_score(self, model):
+    pass
