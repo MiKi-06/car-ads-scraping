@@ -1,5 +1,6 @@
 from statistics import median
 from database import Database
+from statistics_utils import remove_outliers
 
 class Analyzer():
   def __init__(self):
@@ -9,6 +10,8 @@ class Analyzer():
     try:
       ads = self.db.get_ads(model)
       prices = [row["price"] for row in ads]
+      # removes the outlier prices
+      prices = remove_outliers(prices)
       count = len(prices)
       med_price = median(prices)
       total = sum(prices)
