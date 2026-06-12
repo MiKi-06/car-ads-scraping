@@ -29,15 +29,16 @@ class Database():
                         );""")
     self.cursor.execute("""INSERT OR REPLACE INTO avg_price_by_models(
                         model, avg_price, link)
-                        SELECT title, AVG((price)), link
+                        SELECT model, AVG((price)), link
                         FROM ads
                         WHERE price IS NOT NULL
-                        GROUP BY title;""")
+                        GROUP BY model;""")
     self.conn.commit()
 
   def get_ads(self, model="رنو، تندر 90"):
     self.cursor.execute("""SELECT * FROM ads
-                        WHERE title = ? AND price IS NOT NULL""", (model,))
+                        WHERE model = ? AND price IS NOT NULL""", (model,))
+    
     rows = self.cursor.fetchall()
     if not rows:
       return None
@@ -60,9 +61,9 @@ class Database():
                         );""")
     self.cursor.execute("""INSERT OR REPLACE INTO highest_price_by_models(
                         model, highest_price, link)
-                        SELECT title, MAX((price)), link
+                        SELECT model, MAX((price)), link
                         FROM ads
-                        GROUP BY title
+                        GROUP BY model
                         ORDER by price DESC;""")
     self.conn.commit()
 
@@ -74,9 +75,9 @@ class Database():
                         );""")
     self.cursor.execute("""INSERT OR REPLACE INTO lowest_price_by_models(
                         model, lowest_price, link)
-                        SELECT title, MIN((price)), link
+                        SELECT model, MIN((price)), link
                         FROM ads
-                        GROUP BY title
+                        GROUP BY model
                         ORDER by price ASC;""")
     self.conn.commit()
 
@@ -105,18 +106,19 @@ class Database():
     self.cursor.execute("""DELETE FROM cheapest_cars;""")
     self.cursor.execute("""INSERT INTO cheapest_cars(
                         model, price, link)
-                        SELECT title, price, link
+                        SELECT model, price, link
                         FROM ads
                         WHERE price IS NOT NULL
                         ORDER by price ASC
                         LIMIT 5;""")
     self.conn.commit()
 
-  def sqlite_submit_records(self, model, link, price, milage, date, source):
+  def sqlite_submit_record(self, ad):
     try:
       # Record insertion
       self.cursor.execute("""INSERT OR IGNORE INTO ads(model, milage, price, link, date, source)
-                              VALUES(?, ?, ?, ?, ?, ?);""", (model, milage, price, link, date, source))
+                            VALUES(?, ?, ?, ?, ?, ?);""",
+                            (ad.model, ad.milage, ad.price, ad.link, ad.date, ad.source))
       
     except sqlite3.OperationalError as e:
       print(e)
@@ -131,22 +133,25 @@ class Database():
                       date TEXT,
                       source TEXT);""")
     for value in values:
-      self.cursor.execute(
-                        f"""
-                        INSERT OR REPLACE INTO {table}
-                        (id, model, milage, price, link, date, source)
-                        VALUES (?, ?, ?, ?, ?, ?, ?)
-                        """,
-                        (
-                            value["id"],
-                            value["model"],
-                            value["milage"],
-                            value["price"],
-                            value["link"],
-                            value["date"],
-                            value["source"],
-                        ),
-                      )
+      try:
+        self.cursor.execute(
+                          f"""
+                          INSERT OR REPLACE INTO {table}
+                          (id, model, milage, price, link, date, source)
+                          VALUES (?, ?, ?, ?, ?, ?, ?)
+                          """,
+                          (
+                              value["id"],
+                              value["model"],
+                              value["milage"],
+                              value["price"],
+                              value["link"],
+                              value["date"],
+                              value["source"],
+                          ),
+                        )
+      except sqlite3.OperationalError as e:
+        print(e)
 
   def close(self):
     self.conn.commit()

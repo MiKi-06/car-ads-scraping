@@ -32,8 +32,6 @@ class Analyzer:
       } 
     except Exception as e:
       print(e)
-    finally:
-      self.db.close()
 
   def find_good_deals(self, ads, med_price = None, threshold= 0.9):
     good_deals = []

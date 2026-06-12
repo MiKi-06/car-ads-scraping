@@ -1,3 +1,4 @@
+from advertisement import Advertisement
 from database import Database
 from analysis import Analyzer
 from excel_exporter import Excelexporter
@@ -44,18 +45,22 @@ try:
   for i, article in enumerate(articles):
     try:
       # Finds the elements
-      title = article.find_element(By.CSS_SELECTOR, title_selector).text
+      model = article.find_element(By.CSS_SELECTOR, title_selector).text
       link = article.find_element(By.TAG_NAME, "a").get_attribute("href")
       price = article.find_element(By.CSS_SELECTOR, price_selector).text
       milage = article.find_element(By.CSS_SELECTOR, "span[dir='ltr']").text
       price = utils.get_digit(price)
       milage = utils.get_digit(milage)
-
       spans = article.find_elements(By.TAG_NAME, "span")
       date = utils.date_finder(spans)
 
-      db.sqlite_submit_records(title, link, price, milage, date, "bama")
-      ex.excel_submit_records(i, title, link, price, milage, date, "bama")
+      # temp default value:
+      source = "bama"
+
+      ad = Advertisement(model, milage, price, link, date, source)
+
+      db.sqlite_submit_record(ad)
+      #ex.excel_submit_records(i, title, link, price, milage, date, "bama")
       db.highest_price_by_models()
       db.lowest_price_by_models()
       db.expensive_cars()
@@ -66,7 +71,8 @@ try:
   time.sleep(1)
   
 finally:
+  print("doooone")
   ex.close()
-  db.close()
   analyzer.analyze_market()
+  db.close()
   driver.quit()
