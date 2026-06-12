@@ -137,17 +137,16 @@ class Database():
         self.cursor.execute(
                           f"""
                           INSERT OR REPLACE INTO {table}
-                          (id, model, milage, price, link, date, source)
-                          VALUES (?, ?, ?, ?, ?, ?, ?)
+                          (model, milage, price, link, date, source)
+                          VALUES (?, ?, ?, ?, ?, ?)
                           """,
                           (
-                              value["id"],
                               value["model"],
                               value["milage"],
                               value["price"],
                               value["link"],
                               value["date"],
-                              value["source"],
+                              value["source"]
                           ),
                         )
       except sqlite3.OperationalError as e:

@@ -71,7 +71,6 @@ try:
   time.sleep(1)
   
 finally:
-  print("doooone")
   ex.close()
   analyzer.analyze_market()
   db.close()
