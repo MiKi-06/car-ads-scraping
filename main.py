@@ -2,14 +2,42 @@ import argparse
 from scraper.database import Database
 from scraper.excel_exporter import Excelexporter
 from scraper.scraper import Scraper
+from scraper.analysis import Analyzer
+from scraper.market_report import Reporter
 def handle_scrape(args):
-  db = Database()
-  ex = Excelexporter()
-  scraper = Scraper(args.min, args.max, db, ex)
-  scraper.scrape()
+  try:
+    db = Database()
+    ex = Excelexporter()
+    scraper = Scraper(args.min, args.max, db, ex)
+    scraper.scrape()
+  except Exception as e:
+    print(e)
+  finally:
+    db.close()
+    ex.close()
 
-  db.close()
-  ex.close()
+def handle_analyze(args):
+  try:
+    db = Database()
+    analyzer = Analyzer(db)
+    result = analyzer.analyze_market(args.model)
+    print(result)
+  except Exception as e:
+    print(e)
+  finally:
+    db.close()
+
+def handle_report(args):
+  try:
+    db = Database()
+    analyzer = Analyzer(db)
+    reporter = Reporter(analyzer)
+    reporter.get_report(args.model)
+  except Exception as e:
+    print(e)
+  finally:
+    db.close()
+
 
 def main():
   parser = argparse.ArgumentParser()
@@ -36,12 +64,17 @@ def main():
   report_parser = subparser.add_parser("report")
   report_parser.add_argument("--model",
                               required=True)
+  
+  scrape_parser.set_defaults(func=handle_scrape)
+  analyze_parser.set_defaults(func=handle_analyze)
+  report_parser.set_defaults(func=handle_report)
 
   args = parser.parse_args()
 
-  if args.command == "scrape":
-    handle_scrape(args)
-
+  if hasattr(args, "func"):
+      args.func(args)
+  else:
+      parser.print_help()
 
 if __name__ == "__main__":
   main()
