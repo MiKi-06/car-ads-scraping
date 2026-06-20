@@ -1,5 +1,5 @@
 from statistics import median
-from ..scraper.statistics_utils import remove_outliers, get_score
+from .statistics_utils import remove_outliers, get_score
 
 class Analyzer:
   def __init__(self, db):
