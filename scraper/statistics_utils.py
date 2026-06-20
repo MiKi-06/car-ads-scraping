@@ -28,7 +28,7 @@ def get_score(deal, med_price):
     score = f"Slightly Expensive 🟠 {diff_percent}"
 
   return{
-    "title": deal["model"],
+    "model": deal["model"],
     "link": deal["link"],
     "price": deal_price,
     "market_price": int(med_price),

@@ -1,6 +1,7 @@
 from advertisement import Advertisement
 from database import Database
 from analysis import Analyzer
+from market_report import Reporter
 from excel_exporter import Excelexporter
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -41,6 +42,7 @@ try:
   db = Database()
   ex = Excelexporter()
   analyzer = Analyzer(db)
+  reporter = Reporter()
   # Finds and inserts ads information into xlsx and database
   for i, article in enumerate(articles):
     try:
@@ -72,6 +74,6 @@ try:
   
 finally:
   ex.close()
-  analyzer.analyze_market()
+  reporter.get_report()
   db.close()
   driver.quit()

@@ -1,5 +1,4 @@
 from statistics import median
-from database import Database
 from statistics_utils import remove_outliers, get_score
 
 class Analyzer:
@@ -22,6 +21,7 @@ class Analyzer:
       
       return{
         "statistics": {
+                      "model": model,
                       "count": count,
                       "median": med_price,
                       "highest": highest,
