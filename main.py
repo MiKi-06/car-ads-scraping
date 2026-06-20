@@ -2,8 +2,8 @@ import argparse
 from scraper.database import Database
 from scraper.excel_exporter import Excelexporter
 from scraper.scraper import Scraper
-from scraper.analysis import Analyzer
-from scraper.market_report import Reporter
+from analysis.analysis import Analyzer
+from reporter.market_report import Reporter
 def handle_scrape(args):
   try:
     db = Database()
