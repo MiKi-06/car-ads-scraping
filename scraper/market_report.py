@@ -1,9 +1,7 @@
-from analysis import Analyzer
-from database import Database
+
 class Reporter:
-  def __init__(self):
-    db = Database()
-    self.analyzer = Analyzer(db)
+  def __init__(self, analyzer):
+    self.analyzer = analyzer
 
   def get_report(self, model= "رنو، تندر 90"):
     report = self.analyzer.analyze_market(model)

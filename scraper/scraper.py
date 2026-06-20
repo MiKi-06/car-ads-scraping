@@ -42,7 +42,7 @@ try:
   db = Database()
   ex = Excelexporter()
   analyzer = Analyzer(db)
-  reporter = Reporter()
+  reporter = Reporter(analyzer)
   # Finds and inserts ads information into xlsx and database
   for i, article in enumerate(articles):
     try:
