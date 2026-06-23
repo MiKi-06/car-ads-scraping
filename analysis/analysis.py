@@ -18,7 +18,6 @@ class Analyzer:
       lowest = min(prices)
       average = (total // count)
       good_deals = self.find_good_deals(ads, med_price)
-      
       return{
         "statistics": {
                       "model": model,
@@ -43,9 +42,9 @@ class Analyzer:
     for ad in ads:
       if ad["price"] < (med_price * threshold):
         good_deals.append(ad)
-    for deal in good_deals:
-      score = get_score(deal, med_price)
-      print(score)
+    #for deal in good_deals:
+      #score = get_score(deal, med_price)
+      #print(score)
     self.db.insert_into("good_deals", good_deals)
     return good_deals
   
