@@ -20,6 +20,14 @@ class Database():
                       date TEXT,
                       source TEXT);""")
 
+  def fetch_models(self):
+    self.cursor.execute("""SELECT model FROM ads
+                          GROUP BY model;
+                          """)
+    rows = self.cursor.fetchall()
+    models = [row['model'] for row in rows]
+    return models
+
   def avg_by_models(self):
     
     self.cursor.execute("""CREATE TABLE IF NOT EXISTS avg_price_by_models(
