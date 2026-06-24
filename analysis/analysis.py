@@ -7,7 +7,7 @@ class Analyzer:
 
   def analyze_market(self, model="رنو، تندر 90"):
     try:
-      ads = self.db.get_ads(model)
+      ads = self.db.fetch_ads(model)
       prices = [row["price"] for row in ads]
       # removes the outlier prices
       prices = remove_outliers(prices)
@@ -30,7 +30,7 @@ class Analyzer:
         "good_deals": good_deals
       } 
     except Exception as e:
-      print(e)
+      raise e
     #finally:
       #self.db.close()
 

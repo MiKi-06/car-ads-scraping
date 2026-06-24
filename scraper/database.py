@@ -47,14 +47,14 @@ class Database():
     self.conn.commit()
 
   # Returns not-zero priced ads related to the given car model
-  def get_ads(self, model="رنو، تندر 90"):
+  def fetch_ads(self, model="رنو، تندر 90"):
     self.cursor.execute("""SELECT * FROM ads
                         WHERE model = ? AND price IS NOT NULL""", (model,))
     
     rows = self.cursor.fetchall()
     if not rows:
       return None
-    return rows
+    return [dict(row) for row in rows]
   
   # Gets not-zero prices for each car model
   def get_prices(self, model= "رنو، تندر 90"):
