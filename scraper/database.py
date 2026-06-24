@@ -9,6 +9,7 @@ class Database():
     except sqlite3.OperationalError as e:
       print(e)
 
+  # Creates the main table (ads)
   def make_table(self):
     # Table init
     self.cursor.execute("""CREATE TABLE IF NOT EXISTS ads (
@@ -20,6 +21,7 @@ class Database():
                       date TEXT,
                       source TEXT);""")
 
+  # Returns all the car models
   def fetch_models(self):
     self.cursor.execute("""SELECT model FROM ads
                           GROUP BY model;
@@ -28,21 +30,23 @@ class Database():
     models = [row['model'] for row in rows]
     return models
 
-  def avg_by_models(self):
+  # Calculates avg price for every model and stores them in new table
+  def avg_of_models(self):
     
-    self.cursor.execute("""CREATE TABLE IF NOT EXISTS avg_price_by_models(
+    self.cursor.execute("""CREATE TABLE IF NOT EXISTS avg_price_of_models(
                         model TEXT PRIMARY KEY,
                         avg_price REAL,
                         link TEXT
                         );""")
     self.cursor.execute("""INSERT OR REPLACE INTO avg_price_by_models(
-                        model, avg_price, link)
-                        SELECT model, AVG((price)), link
+                        model, avg_price)
+                        SELECT model, AVG((price))
                         FROM ads
                         WHERE price IS NOT NULL
                         GROUP BY model;""")
     self.conn.commit()
 
+  # Returns not-zero priced ads related to the given car model
   def get_ads(self, model="رنو، تندر 90"):
     self.cursor.execute("""SELECT * FROM ads
                         WHERE model = ? AND price IS NOT NULL""", (model,))
@@ -52,6 +56,7 @@ class Database():
       return None
     return rows
   
+  # Gets not-zero prices for each car model
   def get_prices(self, model= "رنو، تندر 90"):
     self.cursor.execute("""SELECT price FROM ads
                         WHERE model = ? AND price IS NOT NULL""", (model,))
@@ -61,6 +66,7 @@ class Database():
     prices = [row["price"] for row in rows if row["price"] is not None]
     return prices
   
+  # Finds the top expensive ad for each model and stores in new table
   def highest_price_by_models(self):
     self.cursor.execute("""CREATE TABLE IF NOT EXISTS highest_price_by_models(
                         model TEXT PRIMARY KEY,
@@ -75,6 +81,7 @@ class Database():
                         ORDER by price DESC;""")
     self.conn.commit()
 
+  # Finds the cheapest ad for each model and stores in new table
   def lowest_price_by_models(self):
     self.cursor.execute("""CREATE TABLE IF NOT EXISTS lowest_price_by_models(
                         model TEXT PRIMARY KEY,
@@ -89,6 +96,7 @@ class Database():
                         ORDER by price ASC;""")
     self.conn.commit()
 
+  # Finds top 5 expensive ad for each model and stores in new table
   def expensive_cars(self):
     self.cursor.execute("""CREATE TABLE IF NOT EXISTS expensive_cars(
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -104,7 +112,8 @@ class Database():
                         ORDER BY price DESC
                         LIMIT 5;""")
     self.conn.commit()
-    
+  
+  # Finds top 5 cheap ad for each model and stores in new table
   def cheapest_cars(self):
     self.cursor.execute("""CREATE TABLE IF NOT EXISTS cheapest_cars (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -121,6 +130,7 @@ class Database():
                         LIMIT 5;""")
     self.conn.commit()
 
+  # Inserts ad into ads table
   def sqlite_submit_record(self, ad):
     try:
       # Record insertion
@@ -160,6 +170,7 @@ class Database():
       except sqlite3.OperationalError as e:
         print(e)
 
+  # Saves database changes and closes the connection
   def close(self):
     self.conn.commit()
     self.conn.close()
