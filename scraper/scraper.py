@@ -1,7 +1,7 @@
 from .advertisement import Advertisement
 from .database import Database
-from ..analysis.analysis import Analyzer
-from ..reporter.market_report import Reporter
+from analysis.analysis import Analyzer
+from reporter.market_report import Reporter
 from .excel_exporter import Excelexporter
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -14,11 +14,15 @@ PRICE_SELECTOR = 'p.flex.items-center.justify-end.gap-1'
 
 class Scraper:
   def __init__(self, min_price, max_price, db, ex, city="fars-shiraz"):
+    if db is None:
+      db = Database()
     self.db = db
     self.ex = ex
     self.URL = self.get_url(min_price, max_price, city)
 
   def get_url(self, min, max, city):
+    if min is None or max is None or city is None:
+      return "https://bama.ir/car/all/fars-shiraz?installment=0&price=300000000,1500000000&body=passenger_car"
     return f"https://bama.ir/car/all/{city}?installment=0&price={min},{max}&body=passenger_car"
 
 
@@ -85,5 +89,4 @@ class Scraper:
     finally:
       self.ex.close()
       reporter.get_report()
-      self.db.close()
       driver.quit()

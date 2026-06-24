@@ -14,13 +14,15 @@ if st.button("Analyze"):
   result = analyzer.analyze_market(model)
   stats = result['statistics']
   good_deals = result['good_deals']
-  df = pd.DataFrame(good_deals, columns=["ID", "Model", "Milage", "Price", "Link", "Date", "Source"])
+  
+  df = pd.DataFrame(good_deals, columns=["id", "score", "model", "milage", "price", "link", "date", "source"])
   st.metric(label="Model", value=stats['model'])
   st.metric(label="Count", value=stats['count'])
   st.metric(label="ℹ️Median", value=stats['median'], format="%,d")
   st.metric(label="🔼Highest Price", value=stats['highest'], format="%,d")
   st.metric(label="🔽Lowest Price", value=stats['lowest'], format="%,d")
   st.metric(label="▶️Average", value=stats['average'], format="%,d")
-  st.dataframe(df, hide_index=True, column_config={"model": "شسی"})
+
+  st.dataframe(df, hide_index=True)
 
   

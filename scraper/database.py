@@ -144,6 +144,7 @@ class Database():
   def insert_into(self, table, values):
     self.cursor.execute(f"""CREATE TABLE IF NOT EXISTS {table} (
                       id INTEGER PRIMARY KEY AUTOINCREMENT,
+                      score TEXT,
                       model TEXT NOT NULL,
                       milage INTEGER,
                       price INTEGER,
@@ -155,10 +156,11 @@ class Database():
         self.cursor.execute(
                           f"""
                           INSERT OR REPLACE INTO {table}
-                          (model, milage, price, link, date, source)
-                          VALUES (?, ?, ?, ?, ?, ?)
+                          (score, model, milage, price, link, date, source)
+                          VALUES (?, ?, ?, ?, ?, ?, ?)
                           """,
-                          (
+                          (   
+                              value["score"],
                               value["model"],
                               value["milage"],
                               value["price"],

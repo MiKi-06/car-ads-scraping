@@ -41,6 +41,9 @@ class Analyzer:
       med_price = median(prices)
     for ad in ads:
       if ad["price"] < (med_price * threshold):
+        score = get_score(ad, med_price)
+        ad = dict(ad)
+        ad["score"] = score["score"]
         good_deals.append(ad)
     #for deal in good_deals:
       #score = get_score(deal, med_price)
