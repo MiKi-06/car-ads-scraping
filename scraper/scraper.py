@@ -54,7 +54,6 @@ class Scraper:
       articles = driver.find_elements(By.TAG_NAME, "article")
       # Connecting to database and accessing modules
       analyzer = Analyzer(self.db)
-      reporter = Reporter(analyzer)
       # Finds and inserts ads information into xlsx and database
       for i, article in enumerate(articles):
         try:
@@ -82,6 +81,7 @@ class Scraper:
       time.sleep(1)
       
     finally:
-
-      reporter.get_report()
+      reporter = Reporter(analyzer)
+      if reporter:
+        reporter.get_report()
       driver.quit()

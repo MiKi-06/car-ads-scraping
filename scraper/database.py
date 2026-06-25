@@ -53,7 +53,7 @@ class Database():
     
     rows = self.cursor.fetchall()
     if not rows:
-      return None
+      return []
     return [dict(row) for row in rows]
   
   # Gets not-zero prices for each car model
@@ -62,7 +62,7 @@ class Database():
                         WHERE model = ? AND price IS NOT NULL""", (model,))
     rows = self.cursor.fetchall()
     if not rows:
-      return None
+      return []
     prices = [row["price"] for row in rows if row["price"] is not None]
     return prices
   
@@ -140,11 +140,14 @@ class Database():
       
     except sqlite3.OperationalError as e:
       print(e)
+    finally:
+      self.conn.commit()
 
   def insert_into(self, table, values):
     self.cursor.execute(f"""CREATE TABLE IF NOT EXISTS {table} (
                       id INTEGER PRIMARY KEY AUTOINCREMENT,
                       score TEXT,
+                      diff_percent REAL,
                       model TEXT NOT NULL,
                       milage INTEGER,
                       price INTEGER,
@@ -156,11 +159,12 @@ class Database():
         self.cursor.execute(
                           f"""
                           INSERT OR REPLACE INTO {table}
-                          (score, model, milage, price, link, date, source)
-                          VALUES (?, ?, ?, ?, ?, ?, ?)
+                          (score, diff_percent, model, milage, price, link, date, source)
+                          VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                           """,
                           (   
                               value["score"],
+                              value["diff_percent"],
                               value["model"],
                               value["milage"],
                               value["price"],

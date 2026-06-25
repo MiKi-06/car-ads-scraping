@@ -8,6 +8,19 @@ class Analyzer:
   def analyze_market(self, model="رنو، تندر 90"):
     try:
       ads = self.db.fetch_ads(model)
+      if not ads:
+        print("no data")
+        return{
+        "statistics": {
+                      "model": model,
+                      "count": 0,
+                      "median": 0,
+                      "highest": 0,
+                      "lowest": 0,
+                      "average": 0
+                      },
+        "rated_deals": []
+      } 
       prices = [row["price"] for row in ads]
       # removes the outlier prices
       prices = remove_outliers(prices)
@@ -17,7 +30,7 @@ class Analyzer:
       highest = max(prices)
       lowest = min(prices)
       average = (total // count)
-      good_deals = self.find_good_deals(ads, med_price)
+      rated_deals = self.get_rate_ads(ads, med_price)
       return{
         "statistics": {
                       "model": model,
@@ -27,29 +40,28 @@ class Analyzer:
                       "lowest": lowest,
                       "average": average
                       },
-        "good_deals": good_deals
+        "rated_deals": rated_deals
       } 
     except Exception as e:
       raise e
-    #finally:
-      #self.db.close()
 
-  def find_good_deals(self, ads, med_price = None, threshold= 0.9):
-    good_deals = []
+  def get_rate_ads(self, ads, med_price = None):
+    rated_ads = []
     if med_price is None:
       prices = [row["price"] for row in ads]
       med_price = median(prices)
     for ad in ads:
-      if ad["price"] < (med_price * threshold):
-        score = get_score(ad, med_price)
-        ad = dict(ad)
-        ad["score"] = score["score"]
-        good_deals.append(ad)
-    #for deal in good_deals:
-      #score = get_score(deal, med_price)
-      #print(score)
-    self.db.insert_into("good_deals", good_deals)
-    return good_deals
+      score = get_score(ad, med_price)
+      ad = dict(ad)
+      ad["score"] = score["score"]
+      print(ad["score"])
+      ad["diff_percent"] = score["percent"]
+      print(ad["diff_percent"])
+      rated_ads.append(ad)
   
+    self.db.insert_into("rated_ads", rated_ads)
+    return rated_ads
+  
+
   def market_score(self, model):
     pass

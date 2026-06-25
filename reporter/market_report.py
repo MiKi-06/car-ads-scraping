@@ -12,7 +12,7 @@ class Reporter:
     print("\nAverage Price: \n", report['statistics']['average'])
     print("\nHighest: \n", report['statistics']['highest'])
     print("\nLowest: \n", report['statistics']['lowest'])
-    print("\nGood Deals: \n", len(report['good_deals']))
+    print("\nGood Deals: \n", len(report['rated_deals']))
     print("================================")
 
 

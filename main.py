@@ -9,7 +9,8 @@ def handle_scrape(args):
     db = Database()
     ex = Excelexporter()
     scraper = Scraper(args.min, args.max, db, ex)
-    scraper.scrape()
+    for _ in scraper.scrape():
+      pass
   except Exception as e:
     print(e)
   finally:
