@@ -85,7 +85,7 @@ class Dashboard:
           x="milage",
           y="price",
           color="price",
-          hover_data=["model", "date"],
+          hover_data=["model", "price", "milage","link", "date"],
           title=f"{self.model} Market Analysis"
       )
 
