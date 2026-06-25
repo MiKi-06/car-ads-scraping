@@ -2,7 +2,6 @@ from .advertisement import Advertisement
 from .database import Database
 from analysis.analysis import Analyzer
 from reporter.market_report import Reporter
-from .excel_exporter import Excelexporter
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 import time
@@ -13,11 +12,10 @@ TITLE_SELECTOR = "div.inline-flex.mb-1 span.text-neutral-10"
 PRICE_SELECTOR = 'p.flex.items-center.justify-end.gap-1'
 
 class Scraper:
-  def __init__(self, min_price, max_price, db, ex, city="fars-shiraz"):
+  def __init__(self, min_price, max_price, db, city="fars-shiraz"):
     if db is None:
       db = Database()
     self.db = db
-    self.ex = ex
     self.URL = self.get_url(min_price, max_price, city)
 
   def get_url(self, min, max, city):
@@ -76,17 +74,18 @@ class Scraper:
           ad = Advertisement(model, milage, price, link, date, source)
 
           self.db.sqlite_submit_record(ad)
+          yield i + 1, len(articles)
           #ex.excel_submit_records(i, title, link, price, milage, date, "bama")
-          self.db.highest_price_by_models()
-          self.db.lowest_price_by_models()
-          self.db.expensive_cars()
-          self.db.cheapest_cars()
+          #self.db.highest_price_by_models()
+          #self.db.lowest_price_by_models()
+          #self.db.expensive_cars()
+          #self.db.cheapest_cars()
         except Exception as e:
           print(f"Error in article {i}: {e}")
           continue
       time.sleep(1)
       
     finally:
-      self.ex.close()
+
       reporter.get_report()
       driver.quit()
