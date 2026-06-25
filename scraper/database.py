@@ -137,11 +137,9 @@ class Database():
       self.cursor.execute("""INSERT OR IGNORE INTO ads(model, milage, price, link, date, source)
                             VALUES(?, ?, ?, ?, ?, ?);""",
                             (ad.model, ad.milage, ad.price, ad.link, ad.date, ad.source))
-      
+      self.conn.commit()
     except sqlite3.OperationalError as e:
       print(e)
-    finally:
-      self.conn.commit()
 
   def insert_into(self, table, values):
     self.cursor.execute(f"""CREATE TABLE IF NOT EXISTS {table} (

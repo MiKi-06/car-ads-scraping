@@ -81,7 +81,11 @@ class Scraper:
       time.sleep(1)
       
     finally:
-      reporter = Reporter(analyzer)
-      if reporter:
-        reporter.get_report()
+      try:
+        reporter = Reporter(analyzer)
+        if reporter:
+          reporter.get_report()
+      except Exception as e:
+        print(f"Report error: {e}")
+        
       driver.quit()

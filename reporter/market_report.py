@@ -5,6 +5,9 @@ class Reporter:
 
   def get_report(self, model= "رنو، تندر 90"):
     report = self.analyzer.analyze_market(model)
+    if not report:
+      print("no data to report")
+      return
     print("================================")
     print("Model: \n", report['statistics']['model'])
     print("\nAds count: \n", report['statistics']['count'])

@@ -108,7 +108,7 @@ class Dashboard:
     df = pd.DataFrame(rated_deals, columns=["id", "score", "diff_percent", "model",
                                           "milage", "price", "link",
                                           "date", "source"])
-    st.subheader("🟢 Good Deals")
+    st.subheader("🟢 Ads List")
     df = df.sort_values("score")
     st.dataframe(df, hide_index=True)
 
