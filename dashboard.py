@@ -36,7 +36,7 @@ class Dashboard:
         st.metric(label="▶️Average:", value=stats['average'], format="%,d")
         st.metric(label="🔽Lowest Price:", value=stats['lowest'], format="%,d")
 
-      self.plot_tables(good_deals)
+      self.good_deals_table(good_deals)
       self.plot_dist_chart(prices, stats)
       self.plot_main_chart()
 
@@ -101,7 +101,7 @@ class Dashboard:
 
       st.plotly_chart(fig, width="stretch")
 
-  def plot_tables(self, good_deals):
+  def good_deals_table(self, good_deals):
     if not good_deals:
       st.info("No good deal to show.")
       return
