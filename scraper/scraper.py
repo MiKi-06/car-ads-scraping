@@ -75,11 +75,7 @@ class Scraper:
 
           self.db.sqlite_submit_record(ad)
           yield i + 1, len(articles)
-          #ex.excel_submit_records(i, title, link, price, milage, date, "bama")
-          #self.db.highest_price_by_models()
-          #self.db.lowest_price_by_models()
-          #self.db.expensive_cars()
-          #self.db.cheapest_cars()
+          
         except Exception as e:
           print(f"Error in article {i}: {e}")
           continue
