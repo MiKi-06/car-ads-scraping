@@ -54,7 +54,7 @@ class Analyzer:
       score = get_score(ad, med_price)
       ad = dict(ad)
       ad["score"] = score["score"]
-      ad["diff_percent"] = score["percent"]
+      ad["diff_percent"] = score["diff_percent"]
       rated_ads.append(ad)
   
     self.db.insert_into("rated_ads", rated_ads)
