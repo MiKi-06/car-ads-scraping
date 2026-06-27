@@ -17,28 +17,29 @@ class Dashboard:
     self.model = st.selectbox(label="Models", options=self.models)
 
     if st.button("Analyze"):
-      result = self.analyzer.analyze_market(self.model)
-      stats = result['statistics']
-      rated_deals = result['rated_deals']
-      prices = self.db.get_prices(self.model)
-      prices = remove_outliers(prices)
-      median_price = stats["median"]
+      if self.model is not None:
+        result = self.analyzer.analyze_market(self.model)
+        stats = result['statistics']
+        rated_deals = result['rated_deals']
+        prices = self.db.get_prices(self.model)
+        prices = remove_outliers(prices)
+        median_price = stats["median"]
 
-      col1, col2, col3 = st.columns(3)
+        col1, col2, col3 = st.columns(3)
 
-      with col1:
-        st.metric(label="Model:", value=stats['model'])
-        st.metric(label="Count:", value=stats['count'])
-      with col2:
-        st.metric(label="ℹ️Median:", value=stats['median'], format="%,d")
-        st.metric(label="🔼Highest Price:", value=stats['highest'], format="%,d")
-      with col3:
-        st.metric(label="▶️Average:", value=stats['average'], format="%,d")
-        st.metric(label="🔽Lowest Price:", value=stats['lowest'], format="%,d")
+        with col1:
+          st.metric(label="Model:", value=stats['model'])
+          st.metric(label="Count:", value=stats['count'])
+        with col2:
+          st.metric(label="ℹ️Median:", value=stats['median'], format="%,d")
+          st.metric(label="🔼Highest Price:", value=stats['highest'], format="%,d")
+        with col3:
+          st.metric(label="▶️Average:", value=stats['average'], format="%,d")
+          st.metric(label="🔽Lowest Price:", value=stats['lowest'], format="%,d")
 
-      self.rated_deals_table(rated_deals)
-      self.plot_dist_chart(prices, stats)
-      self.plot_main_chart()
+        self.rated_deals_table(rated_deals)
+        self.plot_dist_chart(prices, stats)
+        self.plot_main_chart()
 
   def plot_dist_chart(self, prices, stats):
     with st.expander("🚗 Price Distribution"):

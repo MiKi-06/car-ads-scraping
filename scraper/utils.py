@@ -7,11 +7,16 @@ def fa_to_en(text):
     ))
 
 def get_digit(string_data):
-  try:
-    digit = int(re.sub(r"[^\d]", "", string_data))
-    return digit
-  except ValueError:
-    return 0
+    string_data = string_data.strip()
+
+    if "صفر" in string_data:
+      return 0
+
+    digits = re.sub(r"[^\d]", "", string_data)
+    if digits:
+      return int(digits)
+
+    return None
   
 def get_date(date):
   date = fa_to_en(date.strip())

@@ -14,7 +14,8 @@ source = st.radio("Source(s):", ["bama"],)
 if st.button("Start Scraping"):
   try:
     db = Database()
-    scraper = Scraper(min_price, max_price, db, city)
+    scraper = Scraper(min_price=min_price,max_price=max_price,
+                      db=db, city=city)
     progress_bar = st.progress(0,"Progress:")
     with st.spinner("Scraping...") as spinner:
       for current, total in scraper.scrape():

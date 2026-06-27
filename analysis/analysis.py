@@ -22,9 +22,10 @@ class Analyzer:
         "rated_deals": []
       } 
       prices = [row["price"] for row in ads]
+      
+      count = len(prices)
       # removes the outlier prices
       prices = remove_outliers(prices)
-      count = len(prices)
       med_price = median(prices)
       total = sum(prices)
       highest = max(prices)

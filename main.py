@@ -8,7 +8,8 @@ def handle_scrape(args):
   try:
     db = Database()
     ex = Excelexporter()
-    scraper = Scraper(args.min, args.max, db, ex)
+    scraper = Scraper(min_price=args.min,max_price=args.max,
+                      db=db)
     for _ in scraper.scrape():
       pass
   except Exception as e:

@@ -4,7 +4,9 @@ from analysis.analysis import Analyzer
 from reporter.market_report import Reporter
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 import time
 from . import utils
 
@@ -19,17 +21,16 @@ class Scraper:
     self.db = db
     self.URL = self.get_url(min_price, max_price, city)
 
-  def get_url(self, min, max, city):
-    if min is None or max is None or city is None:
+  def get_url(self, min_price, max_price, city):
+    if min_price is None or max_price is None or city is None:
       return "https://bama.ir/car/all/fars-shiraz"
-    return f"https://bama.ir/car/all/{city}?installment=0&price={min},{max}&body=passenger_car"
+    return f"https://bama.ir/car/all/{city}?installment=0&price={min_price},{max_price}&body=passenger_car"
 
 
   def scroll_to_bottom(self, driver, pause_time=2):
     LOAD_BTN_SELECTOR = "//button//span[text()='بیشتر']/.."
     last_height = driver.execute_script("return document.body.scrollHeight")
-    finished = False
-    while not finished:
+    while True:
       driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
       
       time.sleep(pause_time)
@@ -38,16 +39,26 @@ class Scraper:
       if last_height == new_height:
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         try:
-          load_btn = driver.find_element(By.XPATH, LOAD_BTN_SELECTOR)
+          load_btn = WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.XPATH, LOAD_BTN_SELECTOR)))
+          driver.execute_script("arguments[0].scrollIntoView(true);", load_btn)
           load_btn.click()
-        except NoSuchElementException:
-          pass
-        time.sleep(pause_time)
-        final_height = driver.execute_script("return document.body.scrollHeight")
-        if final_height == new_height:
-          return True
+          time.sleep(pause_time)
+
+          new_height = driver.execute_script("return document.body.scrollHeight")
         
-      last_height = new_height
+          if new_height == last_height:
+            return True
+          else:
+            last_height = new_height
+        except (NoSuchElementException, TimeoutException):
+          print("nosuch, timeout")
+          return True
+        except Exception as e:
+          print("Error clicking btn")
+          return True
+
+      else:
+        last_height = new_height
 
   def scrape(self):
     try:
@@ -62,12 +73,17 @@ class Scraper:
       # Finds and inserts ads information into xlsx and database
       for i, article in enumerate(articles):
         try:
+          price = 0
           # Finds the elements
           model = article.find_element(By.CSS_SELECTOR, TITLE_SELECTOR).text
           link = article.find_element(By.TAG_NAME, "a").get_attribute("href")
-          price = article.find_element(By.CSS_SELECTOR, PRICE_SELECTOR).text
+          price = article.find_elements(By.CSS_SELECTOR, PRICE_SELECTOR)
           milage = article.find_element(By.CSS_SELECTOR, "span[dir='ltr']").text
-          price = utils.get_digit(price)
+          
+          if price:
+            price = utils.get_digit(price[0].text)
+          else:
+            price = None
           milage = utils.get_digit(milage)
           spans = article.find_elements(By.TAG_NAME, "span")
           date = utils.date_finder(spans)
@@ -80,6 +96,8 @@ class Scraper:
           self.db.sqlite_submit_record(ad)
           yield i + 1, len(articles)
           
+        except NoSuchElementException:
+          price = 0
         except Exception as e:
           print(f"Error in article {i}: {e}")
           continue

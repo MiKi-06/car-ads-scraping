@@ -12,5 +12,5 @@ def test_scroll_to_bottom():
   scraper.scroll_to_bottom(driver=driver, pause_time=3, max_attempts=10)
 
 
-if __name__ == "__main__":
+if __name__ == "__main__": 
   test_scroll_to_bottom()
