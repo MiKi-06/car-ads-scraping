@@ -30,7 +30,7 @@ class Analyzer:
       highest = max(prices)
       lowest = min(prices)
       average = (total // count)
-      rated_deals = self.get_rate_ads(ads, med_price)
+      rated_deals = self.rate_ads(ads, med_price)
       return{
         "statistics": {
                       "model": model,
@@ -45,7 +45,7 @@ class Analyzer:
     except Exception as e:
       raise e
 
-  def get_rate_ads(self, ads, med_price = None):
+  def rate_ads(self, ads, med_price = None):
     rated_ads = []
     if med_price is None:
       prices = [row["price"] for row in ads]
@@ -54,9 +54,7 @@ class Analyzer:
       score = get_score(ad, med_price)
       ad = dict(ad)
       ad["score"] = score["score"]
-      print(ad["score"])
       ad["diff_percent"] = score["percent"]
-      print(ad["diff_percent"])
       rated_ads.append(ad)
   
     self.db.insert_into("rated_ads", rated_ads)
