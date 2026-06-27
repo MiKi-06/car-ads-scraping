@@ -4,6 +4,7 @@ from analysis.analysis import Analyzer
 from reporter.market_report import Reporter
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import NoSuchElementException
 import time
 from . import utils
 
@@ -12,7 +13,7 @@ TITLE_SELECTOR = "div.inline-flex.mb-1 span.text-neutral-10"
 PRICE_SELECTOR = 'p.flex.items-center.justify-end.gap-1'
 
 class Scraper:
-  def __init__(self, min_price, max_price, db, city="fars-shiraz"):
+  def __init__(self, db, min_price=0, max_price=0, city="fars-shiraz"):
     if db is None:
       db = Database()
     self.db = db
@@ -20,14 +21,15 @@ class Scraper:
 
   def get_url(self, min, max, city):
     if min is None or max is None or city is None:
-      return "https://bama.ir/car/all/fars-shiraz?installment=0&price=300000000,1500000000&body=passenger_car"
+      return "https://bama.ir/car/all/fars-shiraz"
     return f"https://bama.ir/car/all/{city}?installment=0&price={min},{max}&body=passenger_car"
 
 
-  def scroll_to_bottom(self, driver, pause_time=2, max_attempts = 5):
+  def scroll_to_bottom(self, driver, pause_time=2):
+    LOAD_BTN_SELECTOR = "//button//span[text()='بیشتر']/.."
     last_height = driver.execute_script("return document.body.scrollHeight")
-    attempt = 0
-    while attempt < max_attempts:
+    finished = False
+    while not finished:
       driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
       
       time.sleep(pause_time)
@@ -35,13 +37,16 @@ class Scraper:
       new_height = driver.execute_script("return document.body.scrollHeight")
       if last_height == new_height:
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        time.sleep(1.5)
-
+        try:
+          load_btn = driver.find_element(By.XPATH, LOAD_BTN_SELECTOR)
+          load_btn.click()
+        except NoSuchElementException:
+          pass
+        time.sleep(pause_time)
         final_height = driver.execute_script("return document.body.scrollHeight")
         if final_height == new_height:
           return True
         
-      attempt +=1
       last_height = new_height
 
   def scrape(self):
