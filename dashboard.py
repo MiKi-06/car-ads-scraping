@@ -23,6 +23,7 @@ class Dashboard:
         rated_deals = result['rated_deals']
         prices = self.db.get_prices(self.model)
         prices = remove_outliers(prices)
+
         median_price = stats["median"]
 
         col1, col2, col3 = st.columns(3)

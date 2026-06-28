@@ -83,7 +83,7 @@ class Scraper:
           if price:
             price = utils.get_digit(price[0].text)
           else:
-            price = None
+            price = 0
           milage = utils.get_digit(milage)
           spans = article.find_elements(By.TAG_NAME, "span")
           date = utils.date_finder(spans)

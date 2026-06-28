@@ -1,6 +1,8 @@
 import numpy as np
 from statistics import median
 def remove_outliers(prices):
+  if not prices:
+    return np.array([])
   prices = np.array(prices)
   q1 = np.percentile(prices, 25)
   q3 = np.percentile(prices, 75)
@@ -15,6 +17,16 @@ def remove_outliers(prices):
 
 def get_score(deal, med_price):
   deal_price = deal["price"]
+  if deal_price == 0 :
+    return {
+    "model": deal["model"],
+    "link": deal["link"],
+    "price": 0,
+    "market_price": 0,
+    "difference": 0,
+    "diff_percent": 0,
+    "score": "⚪ Negotiable"
+  }
   difference = deal_price - med_price
   diff_percent = ((deal_price - med_price) / med_price) * 100
   diff_percent = round(diff_percent, 2)
