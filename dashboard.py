@@ -107,9 +107,9 @@ class Dashboard:
     if not rated_deals:
       st.info("No good deal to show.")
       return
-    df = pd.DataFrame(rated_deals, columns=["id", "score", "diff_percent", "model",
-                                          "milage", "price", "link",
-                                          "date", "source"])
+    df = pd.DataFrame(rated_deals, columns=["score", "diff_percent", "model",
+                                          "year", "milage", "price",
+                                          "link", "date", "source"])
     st.subheader("🟢 Ads List")
     df = df.sort_values("score")
     st.dataframe(df, hide_index=True)

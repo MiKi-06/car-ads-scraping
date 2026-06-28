@@ -15,6 +15,7 @@ class Database():
     self.cursor.execute("""CREATE TABLE IF NOT EXISTS ads (
                       id INTEGER PRIMARY KEY AUTOINCREMENT,
                       model TEXT NOT NULL,
+                      year INT,
                       milage INTEGER,
                       price INTEGER,
                       link TEXT UNIQUE,
@@ -134,9 +135,9 @@ class Database():
   def sqlite_submit_record(self, ad):
     try:
       # Record insertion
-      self.cursor.execute("""INSERT OR IGNORE INTO ads(model, milage, price, link, date, source)
-                            VALUES(?, ?, ?, ?, ?, ?);""",
-                            (ad.model, ad.milage, ad.price, ad.link, ad.date, ad.source))
+      self.cursor.execute("""INSERT OR IGNORE INTO ads(model, year, milage, price, link, date, source)
+                            VALUES(?, ?, ?, ?, ?, ?, ?);""",
+                            (ad.model, ad.year, ad.milage, ad.price, ad.link, ad.date, ad.source))
       self.conn.commit()
     except sqlite3.OperationalError as e:
       print(e)
@@ -147,6 +148,7 @@ class Database():
                       score TEXT,
                       diff_percent REAL,
                       model TEXT NOT NULL,
+                      year INT,
                       milage INTEGER,
                       price INTEGER,
                       link TEXT UNIQUE,
@@ -157,13 +159,14 @@ class Database():
         self.cursor.execute(
                           f"""
                           INSERT OR REPLACE INTO {table}
-                          (score, diff_percent, model, milage, price, link, date, source)
-                          VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                          (score, diff_percent, model, year, milage, price, link, date, source)
+                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                           """,
                           (   
                               value["score"],
                               value["diff_percent"],
                               value["model"],
+                              value["year"],
                               value["milage"],
                               value["price"],
                               value["link"],

@@ -79,7 +79,7 @@ class Scraper:
           link = article.find_element(By.TAG_NAME, "a").get_attribute("href")
           price = article.find_elements(By.CSS_SELECTOR, PRICE_SELECTOR)
           milage = article.find_element(By.CSS_SELECTOR, "span[dir='ltr']").text
-          
+          year = int(link[-4:])
           if price:
             price = utils.get_digit(price[0].text)
           else:
@@ -91,7 +91,7 @@ class Scraper:
           # temp default value:
           source = "bama"
 
-          ad = Advertisement(model, milage, price, link, date, source)
+          ad = Advertisement(model, year, milage, price, link, date, source)
 
           self.db.sqlite_submit_record(ad)
           yield i + 1, len(articles)
