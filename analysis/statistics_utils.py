@@ -31,13 +31,13 @@ def get_score(deal, med_price):
   diff_percent = ((deal_price - med_price) / med_price) * 100
   diff_percent = round(diff_percent, 2)
   if diff_percent <= -11.4:
-    score = f"Excellent 🟢 {diff_percent}"
+    score = f"Excellent 🟢"
   elif diff_percent >= 18:
-    score = f"Overpriced 🔴 {diff_percent}"
+    score = f"Overpriced 🔴"
   elif -11.4 < diff_percent < 3:
-    score = f"Fair Price 🟡 {diff_percent}"
+    score = f"Fair Price 🟡"
   else:
-    score = f"Slightly Expensive 🟠 {diff_percent}"
+    score = f"Slightly Expensive 🟠"
 
   return{
     "model": deal["model"],
