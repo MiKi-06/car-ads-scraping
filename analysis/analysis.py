@@ -21,16 +21,19 @@ class Analyzer:
                       },
         "rated_deals": []
       } 
-      prices = [row["price"] for row in ads]
+
       
-      count = len(prices)
+
+      prices = [row["price"] for row in ads if row["price"] > 0]
+      
+      count = len(ads)
       # removes the outlier prices
       prices = remove_outliers(prices)
       med_price = median(prices)
       total = sum(prices)
       highest = max(prices)
       lowest = min(prices)
-      average = (total // count)
+      average = (total // len(prices))
       rated_deals = self.rate_ads(ads, med_price)
       return{
         "statistics": {
