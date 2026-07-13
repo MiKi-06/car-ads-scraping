@@ -17,7 +17,7 @@ def remove_outliers(prices):
 
 def get_score(deal, med_price):
   deal_price = deal["price"]
-  if deal_price == 0 :
+  if deal_price == 0 or med_price == 0:
     return {
     "model": deal["model"],
     "link": deal["link"],
