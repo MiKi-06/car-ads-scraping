@@ -12,7 +12,6 @@ class Dashboard:
     self.analyzer = Analyzer(self.db)
     self.models = self.db.fetch_models()
     self.date_diff = self.get_date_diff()
-    print(self.date_diff)
     self.init()
 
   def init(self):
@@ -22,10 +21,10 @@ class Dashboard:
       st.caption(body="Collect ads first.")
     elif self.date_diff <= 6:
       st.badge("Data is fresh!", icon=":material/done_all:",color="green", 
-              help="Data refresh is not needed.")
+              help="Data refresh is up to date.")
     elif 6 < self.date_diff <= 12:
       st.badge("Data is fine.", icon=":material/check:",color="yellow", 
-              help="Data refresh the data.")
+              help="Refresh the data.")
     elif 12 < self.date_diff < 24:
       st.badge("Data is outdated.", icon=":material/warning:",color="orange", 
               help="Data refresh is recommended.")
