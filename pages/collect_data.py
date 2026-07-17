@@ -1,7 +1,7 @@
 import streamlit as st
 from scraper.scraper import Scraper
 from scraper.database import Database
-
+from selenium.common.exceptions import WebDriverException
 LOCATIONS = ["isfahan-isfahan", "tehran-tehran", "alborz-karaj",
             "azarbaijan_sharghi-tabriz", "razavi_khorasan-mashhad",
             "fars-shiraz"]
@@ -25,6 +25,10 @@ if st.button("Start Scraping"):
     with st.spinner("Scraping...") as spinner:
       for current, total in scraper.scrape():
         progress_bar.progress(current / total)
+  except WebDriverException as e:
+    st.error(f"Error collecting data :{e.msg}")
+  else:
+    st.success("Scraping completed successfully.")
+
   finally:
     db.close()
-    st.success("Scraping completed successfully.")

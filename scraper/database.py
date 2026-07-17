@@ -1,16 +1,17 @@
 import sqlite3
+from datetime import datetime
 class Database():
   def __init__(self):
     try:
       self.conn = sqlite3.connect(r".\\output\\bama_scraping.db")
       self.conn.row_factory = sqlite3.Row
       self.cursor = self.conn.cursor()
-      self.make_table()
+      self.create_tables()
     except sqlite3.OperationalError as e:
       print(e)
 
   # Creates the main table (ads)
-  def make_table(self):
+  def create_tables(self):
     # Table init
     self.cursor.execute("""CREATE TABLE IF NOT EXISTS ads (
                       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -21,6 +22,23 @@ class Database():
                       link TEXT UNIQUE,
                       date TEXT,
                       source TEXT);""")
+    
+    self.cursor.execute("""CREATE TABLE IF NOT EXISTS metadata(
+                        key text PRIMARY KEY,
+                        value TEXT);""")
+
+  def update_last_update(self, date=None):
+    if date is None:
+      date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    self.cursor.execute("""INSERT OR REPLACE INTO metadata(key, value)
+                        VALUES ('last_update', ?)""", (date,))
+
+  def get_last_update(self):
+    self.cursor.execute("""SELECT value
+                        FROM metadata
+                        WHERE key = 'last_update';""")
+    return self.cursor.fetchone()[0]
 
   # Returns all the car models
   def fetch_models(self):

@@ -105,6 +105,7 @@ class Scraper:
       
     finally:
       try:
+        self.db.update_last_update()
         reporter = Reporter(analyzer)
         if reporter:
           reporter.get_report()

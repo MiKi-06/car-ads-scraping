@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+from datetime import datetime, timedelta
 from scraper.database import Database
 from analysis.analysis import Analyzer
 from analysis.statistics_utils import remove_outliers
@@ -10,12 +11,29 @@ class Dashboard:
     self.db = Database()
     self.analyzer = Analyzer(self.db)
     self.models = self.db.fetch_models()
+    self.date_diff = self.get_date_diff()
     self.init()
 
   def init(self):
     st.title("🚗 Car Market Analyzer")
-    self.model = st.selectbox(label="Models", options=self.models)
 
+    if self.date_diff is None:
+      st.caption(body="Collect ads first.")
+    elif self.date_diff <= 6:
+      st.badge("Data is fresh!", icon=":material/done_all:",color="green", 
+              help="Data refresh is not needed.")
+    elif 6 < self.date_diff <= 12:
+      st.badge("Data is fine.", icon=":material/check:",color="yellow", 
+              help="Data refresh the data.")
+    elif 12 < self.date_diff < 24:
+      st.badge("Data is outdated.", icon=":material/warning:",color="orange", 
+              help="Data refresh is recommended.")
+    else:
+      st.badge("Data Needs refreshing!", icon=":material/block:",color="red", 
+              help="Data refresh is necessary.")
+    
+    self.model = st.selectbox(label="Models", options=self.models)
+    
     if st.button("Analyze"):
       if self.model is not None:
         result = self.analyzer.analyze_market(self.model)
@@ -41,6 +59,18 @@ class Dashboard:
         self.rated_deals_table(rated_deals)
         self.plot_dist_chart(prices, stats)
         self.plot_main_chart()
+
+  def get_date_diff(self):
+    pass
+    if (last_update:=self.db.get_last_update()):
+      now = datetime.now()
+      last_update = datetime.fromisoformat(last_update)
+      diff = now - last_update
+      return diff.total_seconds() / 3600
+    else:
+      return None
+
+      
 
   def plot_dist_chart(self, prices, stats):
     with st.expander("🚗 Price Distribution"):
