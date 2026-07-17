@@ -76,7 +76,7 @@ class Database():
   def sqlite_submit_record(self, ad):
     try:
       # Record insertion
-      self.cursor.execute("""INSERT OR IGNORE INTO ads(model, year, milage, price, link, date, source)
+      self.cursor.execute("""INSERT OR REPLACE INTO ads(model, year, milage, price, link, date, source)
                             VALUES(?, ?, ?, ?, ?, ?, ?);""",
                             (ad.model, ad.year, ad.milage, ad.price, ad.link, ad.date, ad.source))
       self.conn.commit()
