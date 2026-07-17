@@ -12,6 +12,7 @@ class Dashboard:
     self.analyzer = Analyzer(self.db)
     self.models = self.db.fetch_models()
     self.date_diff = self.get_date_diff()
+    print(self.date_diff)
     self.init()
 
   def init(self):
@@ -32,6 +33,11 @@ class Dashboard:
       st.badge("Data Needs refreshing!", icon=":material/block:",color="red", 
               help="Data refresh is necessary.")
     
+    if st.button("Update Market"):
+      st.switch_page(r"pages//collect_data.py")
+
+    st.divider()
+
     self.model = st.selectbox(label="Models", options=self.models)
     
     if st.button("Analyze"):

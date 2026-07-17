@@ -29,7 +29,7 @@ class Database():
 
   def update_last_update(self, date=None):
     if date is None:
-      date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+      date = datetime.now().isoformat()
 
     self.cursor.execute("""INSERT OR REPLACE INTO metadata(key, value)
                         VALUES ('last_update', ?)""", (date,))
@@ -38,8 +38,11 @@ class Database():
     self.cursor.execute("""SELECT value
                         FROM metadata
                         WHERE key = 'last_update';""")
-    return self.cursor.fetchone()[0]
-
+    row = self.cursor.fetchone()
+    if row:
+      return row[0]
+    else:
+      return None
   # Returns all the car models
   def fetch_models(self):
     self.cursor.execute("""SELECT model FROM ads
@@ -48,22 +51,6 @@ class Database():
     rows = self.cursor.fetchall()
     models = [row['model'] for row in rows]
     return models
-
-  # Calculates avg price for every model and stores them in new table
-  def avg_of_models(self):
-    
-    self.cursor.execute("""CREATE TABLE IF NOT EXISTS avg_price_of_models(
-                        model TEXT PRIMARY KEY,
-                        avg_price REAL,
-                        link TEXT
-                        );""")
-    self.cursor.execute("""INSERT OR REPLACE INTO avg_price_by_models(
-                        model, avg_price)
-                        SELECT model, AVG((price))
-                        FROM ads
-                        WHERE price IS NOT NULL
-                        GROUP BY model;""")
-    self.conn.commit()
 
   # Returns not-zero priced ads related to the given car model
   def fetch_ads(self, model="رنو، تندر 90"):
@@ -84,70 +71,6 @@ class Database():
       return []
     prices = [row["price"] for row in rows if row["price"] is not None]
     return prices
-  
-  # Finds the top expensive ad for each model and stores in new table
-  def highest_price_by_models(self):
-    self.cursor.execute("""CREATE TABLE IF NOT EXISTS highest_price_by_models(
-                        model TEXT PRIMARY KEY,
-                        highest_price REAL,
-                        link TEXT
-                        );""")
-    self.cursor.execute("""INSERT OR REPLACE INTO highest_price_by_models(
-                        model, highest_price, link)
-                        SELECT model, MAX((price)), link
-                        FROM ads
-                        GROUP BY model
-                        ORDER by price DESC;""")
-    self.conn.commit()
-
-  # Finds the cheapest ad for each model and stores in new table
-  def lowest_price_by_models(self):
-    self.cursor.execute("""CREATE TABLE IF NOT EXISTS lowest_price_by_models(
-                        model TEXT PRIMARY KEY,
-                        lowest_price REAL,
-                        link TEXT
-                        );""")
-    self.cursor.execute("""INSERT OR REPLACE INTO lowest_price_by_models(
-                        model, lowest_price, link)
-                        SELECT model, MIN((price)), link
-                        FROM ads
-                        GROUP BY model
-                        ORDER by price ASC;""")
-    self.conn.commit()
-
-  # Finds top 5 expensive ad for each model and stores in new table
-  def expensive_cars(self):
-    self.cursor.execute("""CREATE TABLE IF NOT EXISTS expensive_cars(
-                        id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        model TEXT,
-                        price REAL,
-                        link TEXT
-                        );""")
-    self.cursor.execute("""DELETE FROM expensive_cars;""")
-    self.cursor.execute("""INSERT INTO expensive_cars(model, price, link)
-                        SELECT model, price, link
-                        FROM ads
-                        WHERE price IS NOT NULL
-                        ORDER BY price DESC
-                        LIMIT 5;""")
-    self.conn.commit()
-  
-  # Finds top 5 cheap ad for each model and stores in new table
-  def cheapest_cars(self):
-    self.cursor.execute("""CREATE TABLE IF NOT EXISTS cheapest_cars (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        model TEXT,
-                        price REAL,
-                        link TEXT);""")
-    self.cursor.execute("""DELETE FROM cheapest_cars;""")
-    self.cursor.execute("""INSERT INTO cheapest_cars(
-                        model, price, link)
-                        SELECT model, price, link
-                        FROM ads
-                        WHERE price IS NOT NULL
-                        ORDER by price ASC
-                        LIMIT 5;""")
-    self.conn.commit()
 
   # Inserts ad into ads table
   def sqlite_submit_record(self, ad):
