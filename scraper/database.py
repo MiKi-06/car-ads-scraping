@@ -118,6 +118,15 @@ class Database():
       except sqlite3.OperationalError as e:
         print(e)
 
+  def get_ad_by_url(self, url):
+    self.cursor.execute("""SELECT * FROM ads
+                        WHERE link = ?""", (url,))
+    row = self.cursor.fetchone()
+    if row:
+      return row
+    else:
+      return None
+
   # Saves database changes and closes the connection
   def close(self):
     self.conn.commit()
