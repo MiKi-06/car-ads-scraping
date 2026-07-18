@@ -113,3 +113,28 @@ class Scraper:
         print(f"Report error: {e}")
         
       driver.quit()
+
+  def single_ad_scrape(self, url):
+    driver = webdriver.Edge()
+    try:
+      driver.get(url)
+      time.sleep(2)
+      model = driver.find_element(By.CSS_SELECTOR, "h1.inline-block.text-right.w-full.text-base.leading-6.font-semibold.max-w-full.truncate").text
+      milage = driver.find_elements(By.CSS_SELECTOR, "span.inline-block.text-right.w-full.text-sm.leading-6.font-normal.max-w-max")
+      year = int(url[-4:])
+      price = driver.find_element(By.CSS_SELECTOR, "span.inline-block.text-left.text-base.leading-6.font-semibold.w-max.truncate").text
+      date = driver.find_element(By.CSS_SELECTOR, "span.text-neutral-10 > span").text
+      milage = utils.get_digit(milage[1].text)
+      price = utils.get_digit(price)
+      date = utils.get_date(date)
+      ad = Advertisement(model, year, milage, price, url, date, "bama")
+      print(model, year, milage, price, date)
+    except Exception as e:
+      print(e)
+      return None
+    else:
+      self.db.sqlite_submit_record(ad)
+    finally:
+      driver.quit()
+
+    
