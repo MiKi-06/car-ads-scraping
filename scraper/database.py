@@ -23,6 +23,12 @@ class Database():
                       date TEXT,
                       source TEXT);""")
     
+    self.cursor.execute("""CREATE TABLE IF NOT EXISTS model_cache (
+                      model TEXT PRIMARY KEY,
+                      ads_count INTEGER NOT NULL,
+                      last_update TEXT NOT NULL
+                  );""")
+
     self.cursor.execute("""CREATE TABLE IF NOT EXISTS metadata(
                         key text PRIMARY KEY,
                         value TEXT);""")
