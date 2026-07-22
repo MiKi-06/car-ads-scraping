@@ -11,7 +11,9 @@ def get_digit(string_data):
 
     if "صفر" in string_data:
       return 0
-
+    elif "توافقی" in string_data:
+      return 0
+    
     digits = re.sub(r"[^\d]", "", string_data)
     if digits:
       return int(digits)
