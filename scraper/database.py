@@ -82,6 +82,9 @@ class Database():
       self.conn.commit()
     except sqlite3.OperationalError as e:
       print(e)
+    except Exception as e:
+      print(f"database.py sqlite_sumbit_record():{e}")
+
 
   def insert_into(self, table, values):
     self.cursor.execute(f"""CREATE TABLE IF NOT EXISTS {table} (
@@ -123,7 +126,7 @@ class Database():
                         WHERE link = ?""", (url,))
     row = self.cursor.fetchone()
     if row:
-      return row
+      return dict(row)
     else:
       return None
 
