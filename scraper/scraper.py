@@ -28,7 +28,7 @@ class Scraper:
     return f"https://bama.ir/car/all/{city}?installment=0&price={min_price},{max_price}&body=passenger_car"
 
 
-  def scroll_to_bottom(self, driver, pause_time=2):
+  def scroll_to_bottom(self, driver, pause_time=2, threshold=None):
     LOAD_BTN_SELECTOR = "//button//span[text()='بیشتر']/.."
     last_height = driver.execute_script("return document.body.scrollHeight")
     while True:
@@ -158,7 +158,48 @@ class Scraper:
 
     btn = driver.find_element(By.CSS_SELECTOR, "#__nuxt > div > div.fixed.inset-0.bg-white.w-full.h-full.flex.flex-col.z-100 > div.w-full.flex.justify-center > div > div > div > div > a:nth-child(1) > button")
     btn.click()
-    time.sleep(3)
+    time.sleep(2)
 
+    ads = self.collect_ads(driver)
 
+    time.sleep(5)
+
+  def collect_ads(self, driver):
+
+    ads = []
+
+    #self.scroll_to_bottom(driver= driver)
+
+    articles = driver.find_elements(By.TAG_NAME, "article")
+    print(len(articles))
+    for i, article in enumerate(articles):
+      try:
+        price = 0
+        # Finds the elements
+        model = article.find_element(By.CSS_SELECTOR, TITLE_SELECTOR).text
+        link = article.find_element(By.TAG_NAME, "a").get_attribute("href")
+        price = article.find_elements(By.CSS_SELECTOR, PRICE_SELECTOR)
+        milage = article.find_element(By.CSS_SELECTOR, "span[dir='ltr']").text
+        year = int(link[-4:])
+        if price:
+          price = utils.get_digit(price[0].text)
+        else:
+          price = 0
+        milage = utils.get_digit(milage)
+        spans = article.find_elements(By.TAG_NAME, "span")
+        date = utils.date_finder(spans)
+
+        # temp default value:
+        source = "bama"
+
+        ad = Advertisement(model, year, milage, price, link, date, source)
+        ads.append(ad)
+        print(ad.model, ad.year, ad.milage, ad.price, ad.date) 
+        
+      except NoSuchElementException:
+        price = 0
+      except Exception as e:
+        print(f"Error in article {i}: {e}")
+        continue
     
+    return ads
