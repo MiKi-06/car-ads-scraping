@@ -121,23 +121,26 @@ class Scraper:
       driver.quit()
 
   def scrape_model(self, model):
-    driver = webdriver.Edge()
-    driver.get("https://bama.ir/")
-    time.sleep(2)
+    try:
+      driver = webdriver.Edge()
+      driver.get("https://bama.ir/")
+      time.sleep(2)
 
-    search_btn = driver.find_element(By.CSS_SELECTOR, "#__nuxt > div > main > div > section > button")
-    search_btn.click()
-    search_bar = driver.find_element(By.TAG_NAME, "input")
-    search_bar.send_keys(model)
-    time.sleep(2)
+      search_btn = driver.find_element(By.CSS_SELECTOR, "#__nuxt > div > main > div > section > button")
+      search_btn.click()
+      search_bar = driver.find_element(By.TAG_NAME, "input")
+      search_bar.send_keys(model)
+      time.sleep(2)
 
-    btn = driver.find_element(By.CSS_SELECTOR, "#__nuxt > div > div.fixed.inset-0.bg-white.w-full.h-full.flex.flex-col.z-100 > div.w-full.flex.justify-center > div > div > div > div > a:nth-child(1) > button")
-    btn.click()
-    time.sleep(2)
-
-    ads = self.collect_ads(driver, 1)
-
-    time.sleep(5)
+      btn = driver.find_element(By.CSS_SELECTOR, "#__nuxt > div > div.fixed.inset-0.bg-white.w-full.h-full.flex.flex-col.z-100 > div.w-full.flex.justify-center > div > div > div > div > a:nth-child(1) > button")
+      btn.click()
+      time.sleep(2)
+      ads =  self.collect_ads(driver, 1)
+    except Exception as e:
+      print(e)
+    finally:
+      driver.quit()
+      return ads
 
   def collect_ads(self, driver, threshold=10):
 
@@ -146,7 +149,6 @@ class Scraper:
     self.scroll_to_bottom(driver=driver, threshold=threshold)
 
     articles = driver.find_elements(By.TAG_NAME, "article")
-    print(len(articles))
     for i, article in enumerate(articles):
       try:
         price = 0
@@ -169,7 +171,6 @@ class Scraper:
 
         ad = Advertisement(model, year, milage, price, link, date, source)
         ads.append(ad)
-        print(ad.model, ad.year, ad.milage, ad.price, ad.date) 
 
       except NoSuchElementException:
         price = 0

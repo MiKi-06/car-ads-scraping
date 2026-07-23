@@ -49,4 +49,8 @@ def get_score(deal, med_price):
     "score": score
   }
 
+def clean_ads(ads):
 
+  ads = list(filter(lambda ad: ad.price > 0, ads))
+
+  return ads

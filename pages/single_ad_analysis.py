@@ -1,9 +1,9 @@
 import streamlit as st
 import pandas as pd
+import time
 from scraper.scraper import Scraper
 from scraper.database import Database
-from selenium.common.exceptions import WebDriverException
-
+from analysis import statistics_utils
 st.title("Single Ad Analysis")
 url = st.text_input("Enter ad URL:", placeholder="https://bama.ir/car/..")
 
@@ -19,7 +19,11 @@ if st.button("Analyze"):
     ads = db.fetch_ads(ad["model"])
 
     if len(ads) < 30:
-      scraper.scrape_model(ad["model"])
+      ads = scraper.scrape_model(ad["model"])
+      print(len(ads))
+      time.sleep(3)
+      ads = statistics_utils.clean_ads(ads) 
+      print(len(ads))
     else:
       print("analyze")
 
