@@ -28,10 +28,13 @@ class Scraper:
     return f"https://bama.ir/car/all/{city}?installment=0&price={min_price},{max_price}&body=passenger_car"
 
 
-  def scroll_to_bottom(self, driver, pause_time=2, threshold=None):
+  def scroll_to_bottom(self, driver, pause_time=2, threshold=10):
+    
+    loads = 0
+
     LOAD_BTN_SELECTOR = "//button//span[text()='بیشتر']/.."
     last_height = driver.execute_script("return document.body.scrollHeight")
-    while True:
+    while loads < threshold:
       driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
       
       time.sleep(pause_time)
@@ -57,6 +60,8 @@ class Scraper:
         except Exception as e:
           print("Error clicking btn")
           return True
+        else:
+          loads += 1
 
       else:
         last_height = new_height
@@ -66,42 +71,12 @@ class Scraper:
       driver = webdriver.Edge()
       driver.get(self.URL)
       time.sleep(2)
-      self.scroll_to_bottom(driver= driver)
-      # Gets ads containers
-      articles = driver.find_elements(By.TAG_NAME, "article")
-      # Connecting to database and accessing modules
       analyzer = Analyzer(self.db)
       # Finds and inserts ads information into xlsx and database
-      for i, article in enumerate(articles):
-        try:
-          price = 0
-          # Finds the elements
-          model = article.find_element(By.CSS_SELECTOR, TITLE_SELECTOR).text
-          link = article.find_element(By.TAG_NAME, "a").get_attribute("href")
-          price = article.find_elements(By.CSS_SELECTOR, PRICE_SELECTOR)
-          milage = article.find_element(By.CSS_SELECTOR, "span[dir='ltr']").text
-          year = int(link[-4:])
-          if price:
-            price = utils.get_digit(price[0].text)
-          else:
-            price = 0
-          milage = utils.get_digit(milage)
-          spans = article.find_elements(By.TAG_NAME, "span")
-          date = utils.date_finder(spans)
-
-          # temp default value:
-          source = "bama"
-
-          ad = Advertisement(model, year, milage, price, link, date, source)
-
-          self.db.sqlite_submit_record(ad)
-          yield i + 1, len(articles)
-          
-        except NoSuchElementException:
-          price = 0
-        except Exception as e:
-          print(f"Error in article {i}: {e}")
-          continue
+      ads = self.collect_ads(driver=driver)
+      for i, ad in enumerate(ads):
+        self.db.sqlite_submit_record(ad)
+        yield i+1, len(ads)
       time.sleep(1)
       
     finally:
@@ -160,15 +135,15 @@ class Scraper:
     btn.click()
     time.sleep(2)
 
-    ads = self.collect_ads(driver)
+    ads = self.collect_ads(driver, 1)
 
     time.sleep(5)
 
-  def collect_ads(self, driver):
+  def collect_ads(self, driver, threshold=10):
 
     ads = []
 
-    #self.scroll_to_bottom(driver= driver)
+    self.scroll_to_bottom(driver=driver, threshold=threshold)
 
     articles = driver.find_elements(By.TAG_NAME, "article")
     print(len(articles))
@@ -195,7 +170,7 @@ class Scraper:
         ad = Advertisement(model, year, milage, price, link, date, source)
         ads.append(ad)
         print(ad.model, ad.year, ad.milage, ad.price, ad.date) 
-        
+
       except NoSuchElementException:
         price = 0
       except Exception as e:
