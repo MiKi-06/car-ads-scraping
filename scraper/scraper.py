@@ -4,6 +4,7 @@ from analysis.analysis import Analyzer
 from reporter.market_report import Reporter
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
@@ -143,5 +144,21 @@ class Scraper:
       self.db.sqlite_submit_record(ad)
     finally:
       driver.quit()
+
+  def scrape_model(self, model):
+    driver = webdriver.Edge()
+    driver.get("https://bama.ir/")
+    time.sleep(2)
+
+    search_btn = driver.find_element(By.CSS_SELECTOR, "#__nuxt > div > main > div > section > button")
+    search_btn.click()
+    search_bar = driver.find_element(By.TAG_NAME, "input")
+    search_bar.send_keys(model)
+    time.sleep(2)
+
+    btn = driver.find_element(By.CSS_SELECTOR, "#__nuxt > div > div.fixed.inset-0.bg-white.w-full.h-full.flex.flex-col.z-100 > div.w-full.flex.justify-center > div > div > div > div > a:nth-child(1) > button")
+    btn.click()
+    time.sleep(3)
+
 
     
