@@ -19,7 +19,8 @@ if st.button("Analyze"):
     ads = db.fetch_ads(ad["model"])
 
     if len(ads) < 30:
-      ads = scraper.scrape_model(ad["model"])
+      scraper.scrape_model(ad)
+      ads = db.fetch_ads(ad["model"])
       print(len(ads))
       time.sleep(3)
       ads = statistics_utils.clean_ads(ads) 
@@ -32,7 +33,12 @@ if st.button("Analyze"):
                                   "link", "date", "source"])
   st.dataframe(df, hide_index=True)
 
-  
+  print(type(ads))
+  print(ads)
+
+  df = pd.DataFrame(ads, columns=["id", "model", "year", "milage", "price",
+                              "link", "date", "source"])
+  st.dataframe(df, hide_index=True)
 
 
   db.close()

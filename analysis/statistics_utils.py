@@ -51,6 +51,9 @@ def get_score(deal, med_price):
 
 def clean_ads(ads):
 
-  ads = list(filter(lambda ad: ad.price > 0, ads))
+  ads = list(filter(lambda ad: ad["price"] > 0, ads))
 
+  prices = [ad["price"] for ad in ads]
+  prices = remove_outliers(prices)
+  median_price = median(prices)
   return ads

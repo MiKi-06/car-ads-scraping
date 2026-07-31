@@ -72,11 +72,8 @@ class Scraper:
       driver.get(self.URL)
       time.sleep(2)
       analyzer = Analyzer(self.db)
-      # Finds and inserts ads information into xlsx and database
-      ads = self.collect_ads(driver=driver)
-      for i, ad in enumerate(ads):
-        self.db.sqlite_submit_record(ad)
-        yield i+1, len(ads)
+      # Finds and inserts ads information into the database
+      self.collect_ads(driver=driver)
       time.sleep(1)
       
     finally:
@@ -120,7 +117,7 @@ class Scraper:
     finally:
       driver.quit()
 
-  def scrape_model(self, model):
+  def scrape_model(self, ad):
     try:
       driver = webdriver.Edge()
       driver.get("https://bama.ir/")
@@ -129,12 +126,15 @@ class Scraper:
       search_btn = driver.find_element(By.CSS_SELECTOR, "#__nuxt > div > main > div > section > button")
       search_btn.click()
       search_bar = driver.find_element(By.TAG_NAME, "input")
-      search_bar.send_keys(model)
+      search_bar.send_keys(ad["model"])
       time.sleep(2)
 
       btn = driver.find_element(By.CSS_SELECTOR, "#__nuxt > div > div.fixed.inset-0.bg-white.w-full.h-full.flex.flex-col.z-100 > div.w-full.flex.justify-center > div > div > div > div > a:nth-child(1) > button")
       btn.click()
       time.sleep(2)
+      current_url = driver.current_url
+      new_url = current_url + f"-y{ad["year"]}"
+      driver.get(new_url)
       ads =  self.collect_ads(driver, 1)
     except Exception as e:
       print(e)
@@ -170,6 +170,7 @@ class Scraper:
         source = "bama"
 
         ad = Advertisement(model, year, milage, price, link, date, source)
+        self.db.sqlite_submit_record(ad)
         ads.append(ad)
 
       except NoSuchElementException:
