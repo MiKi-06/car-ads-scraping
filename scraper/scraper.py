@@ -55,7 +55,6 @@ class Scraper:
           else:
             last_height = new_height
         except (NoSuchElementException, TimeoutException):
-          print("nosuch, timeout")
           return True
         except Exception as e:
           print("Error clicking btn")
@@ -132,14 +131,17 @@ class Scraper:
       btn = driver.find_element(By.CSS_SELECTOR, "#__nuxt > div > div.fixed.inset-0.bg-white.w-full.h-full.flex.flex-col.z-100 > div.w-full.flex.justify-center > div > div > div > div > a:nth-child(1) > button")
       btn.click()
       time.sleep(2)
+
+      ads = []
+
       current_url = driver.current_url
       new_url = current_url + f"-y{ad["year"]}"
       driver.get(new_url)
       ads =  self.collect_ads(driver, 1)
+
     except Exception as e:
       print(e)
     finally:
-      driver.quit()
       return ads
 
   def collect_ads(self, driver, threshold=10):
@@ -172,11 +174,12 @@ class Scraper:
         ad = Advertisement(model, year, milage, price, link, date, source)
         self.db.sqlite_submit_record(ad)
         ads.append(ad)
-
       except NoSuchElementException:
         price = 0
       except Exception as e:
         print(f"Error in article {i}: {e}")
         continue
-    
+
+
+    print("Collected:", len(ads))
     return ads

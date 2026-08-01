@@ -61,7 +61,7 @@ class Database():
     return models
 
   # Returns not-zero priced ads related to the given car model
-  def fetch_ads(self, model="رنو، تندر 90"):
+  def fetch_ads(self, model):
     self.cursor.execute("""SELECT * FROM ads
                         WHERE model = ? AND price IS NOT NULL""", (model,))
     

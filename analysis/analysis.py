@@ -76,5 +76,16 @@ class Analyzer:
     return rated_ads
   
 
-  def market_score(self, model):
-    pass
+  def price_diff(self, ad, ads):
+    total = len(ads)
+    count = 0
+    if ad["price"] == 0:
+      return None
+    for row in ads:
+      if row["price"] > ad["price"]:
+        count += 1
+    if count > 0:
+      price_difference = ((count / total) * 100)
+      return round(price_difference, None)
+    else:
+      return 0
