@@ -5,7 +5,7 @@ class Analyzer:
   def __init__(self, db):
     self.db = db
 
-  def analyze_market(self, model="رنو، تندر 90"):
+  def analyze_market(self, model):
     try:
       ads = self.db.fetch_ads(model)
       if not ads:
@@ -43,7 +43,7 @@ class Analyzer:
         highest = 0
         lowest = 0
         average = 0
-        rated_deals = self.rate_ads(ads, med_price)
+        rated_deals = self.rate_ads(ads, prices, med_price)
         
       return{
         "statistics": {
@@ -57,13 +57,14 @@ class Analyzer:
         "rated_deals": rated_deals
       } 
     except Exception as e:
-      raise e
+      print(e)
 
-  def rate_ads(self, ads, med_price = None):
+  def rate_ads(self, ads, prices, med_price = None):
     rated_ads = []
     if med_price is None:
       prices = [row["price"] for row in ads]
       med_price = median(prices)
+
     for ad in ads:
       score = get_score(ad, med_price)
       ad = dict(ad)

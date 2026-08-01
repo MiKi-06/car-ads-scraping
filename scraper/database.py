@@ -56,6 +56,8 @@ class Database():
                           """)
     rows = self.cursor.fetchall()
     models = [row['model'] for row in rows]
+    if models is None:
+      return None
     return models
 
   # Returns not-zero priced ads related to the given car model
