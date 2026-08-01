@@ -33,12 +33,17 @@ if st.button("Analyze"):
 
 
     ads = db.fetch_ads(ad["model"])
-    print(ads)
     print(len(ads))
+
     result = analyzer.analyze_market(ad["model"])
-    price_difference = analyzer.price_diff(ad, ads)
     stats = result["statistics"]
     rated_deals = result["rated_deals"]
+
+    stats_difference = analyzer.stats_diff(ad, ads)
+    price_diff = stats_difference["price_diff"]
+    milage_diff = stats_difference["milage_diff"]
+
+    
     print(len(ads))
     
   with st.expander("Market Stats"):
@@ -56,20 +61,30 @@ if st.button("Analyze"):
 
   with st.expander("Result", expanded= True):
 
-    if price_difference is None:
+    if price_diff is None:
       st.badge(f"This Car's price is Negotiable",
               icon=":material/warning:",color="orange")
 
-    elif price_difference > 50:
-      st.badge(f"This Car is cheaper than %{price_difference} of the similar ads",
+    elif price_diff > 50:
+      st.badge(f"This Car is cheaper than %{price_diff} of the similar ads",
               icon=":material/done_all:",color="green")
-    elif 40 < price_difference < 50:
-      st.badge(f"This Car is more expensive than %{price_difference} of the similar ads",
+    elif 40 < price_diff < 50:
+      st.badge(f"This Car is more expensive than %{price_diff} of the similar ads",
                     icon=":material/warning:",color="red")
     else:
-      st.badge(f"This Car has an average price",
+      st.badge(f"This Car has an average Price",
                           icon=":material/check:",color="yellow")
 
+    if milage_diff < 50: 
+      st.badge(f"This Car's Mileage is lower than %{milage_diff} of the similar ads",
+                    icon=":material/done_all:",color="green")
+    elif 40 < milage_diff < 50:
+      st.badge(f"This Car has an average Mileage",
+                          icon=":material/check:",color="yellow")
+    else:
+      st.badge(f"This Car's Milage is higher than %{milage_diff} of the similar ads",
+                    icon=":material/warning:",color="red")
+      
   df = pd.DataFrame([ad], columns=["id", "model", "year", "milage", "price",
                                   "link", "date", "source"])
   st.dataframe(df, hide_index=True)

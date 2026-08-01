@@ -76,8 +76,9 @@ class Analyzer:
     return rated_ads
   
 
-  def price_diff(self, ad, ads):
-    total = len(ads)
+  def stats_diff(self, ad, ads):
+
+    total_ads = len(ads)
     count = 0
     if ad["price"] == 0:
       return None
@@ -85,7 +86,19 @@ class Analyzer:
       if row["price"] > ad["price"]:
         count += 1
     if count > 0:
-      price_difference = ((count / total) * 100)
-      return round(price_difference, None)
+      price_diff = round(((count / total_ads) * 100), None)
     else:
-      return 0
+      price_diff = 0
+
+    count = 0
+    for row in ads:
+      if row["milage"] > ad["milage"]:
+        count += 1
+
+    if count > 0:
+      milage_diff = round(((count / total_ads) * 100), None)
+    else:
+      milage_diff = 0
+
+    return {"price_diff": price_diff,
+            "milage_diff": milage_diff}
