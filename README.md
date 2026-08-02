@@ -1,18 +1,89 @@
-# car-advertisement-collector
-Python program to scrape car ads from Shiraz within a price range (300M–1,500M Toman) and save them as an Excel file.
+# Car Ads Scraping & Market Analysis
+*This project was built as a learning project to practice web scraping, database design, and data analysis with Python.‎*
 
-Features
+A Python project for collecting used car advertisements, storing them in a SQLite database, and analyzing market prices.
 
-✓ Collect car advertisements
+## Features
 
-✓ Store data in SQLite
+- Scrape car advertisements using Selenium
+- Store data in SQLite
+- Prevent duplicate records using unique links
+- Normalize Persian dates
+- Remove price outliers
+- Calculate market statistics
+  - Median price
+  - Average price
+  - Minimum and maximum prices
+- Find potentially underpriced ("good deal") advertisements
+- Analyze advertisements by car model
 
-✓ Export data to Excel
+## Tech Stack
 
-✓ Remove outlier prices (IQR)
+- Python
+- Selenium
+- SQLite
+- NumPy
+- Regular Expressions
+- jdatetime
 
-✓ Analyze market prices
+## Project Structure
 
-✓ Detect underpriced ads
+```
+car-ads-scraping/
+│
+├── scraper.py
+├── database.py
+├── analysis.py
+├── statistics_utils.py
+├── dashboard.py
+├── requirements.txt
+└── README.md
+```
 
-✓ Generate market reports
+## Current Status
+
+This project is currently paused while I focus on learning newer technologies and building more advanced projects.
+
+The existing implementation provides a complete workflow for:
+
+1. Collecting advertisements
+2. Saving them into a database
+3. Cleaning and processing data
+4. Performing basic market analysis
+
+Future improvements may include:
+
+- REST API
+- Docker support
+- Scheduled scraping
+- Multi-source data collection
+- Machine Learning price prediction
+- Interactive web dashboard
+
+## Example Analysis
+
+The project can calculate:
+
+- Market median price
+- Average price
+- Price range
+- Outlier removal
+- Good deal detection based on configurable thresholds
+
+## Installation
+
+```bash
+git clone https://github.com/your_username/car-ads-scraping.git
+
+cd car-ads-scraping
+
+pip install -r requirements.txt
+```
+
+## Future Plans
+
+Although development is currently on hold, the project is planned to evolve into a more complete used-car market analysis platform.
+
+## License
+
+MIT License
