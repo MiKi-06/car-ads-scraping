@@ -70,16 +70,6 @@ The project can calculate:
 - Outlier removal
 - Good deal detection based on configurable thresholds
 
-## Installation
-
-```bash
-git clone https://github.com/your_username/car-ads-scraping.git
-
-cd car-ads-scraping
-
-pip install -r requirements.txt
-```
-
 ## Future Plans
 
 Although development is currently on hold, the project is planned to evolve into a more complete used-car market analysis platform.
