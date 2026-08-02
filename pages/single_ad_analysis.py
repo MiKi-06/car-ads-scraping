@@ -19,10 +19,7 @@ if st.button("Analyze"):
       ad = db.get_ad_by_url(url)
 
     ads = db.fetch_ads(ad["model"])
-    print(ads)
     if len(ads) < 3 or ads is None:
-      scraper.scrape_model(ad)
-      db.conn.commit()
       scraper.scrape_model(ad)
 
       print("Rows in DB:", len(db.fetch_ads(ad["model"])))
@@ -63,8 +60,7 @@ if st.button("Analyze"):
 
     if price_diff is None:
       st.badge(f"This Car's price is Negotiable",
-              icon=":material/warning:",color="orange")
-
+              icon=":material/warning:",color="gray")
     elif price_diff > 50:
       st.badge(f"This Car is cheaper than %{price_diff} of the similar ads",
               icon=":material/done_all:",color="green")
@@ -75,14 +71,18 @@ if st.button("Analyze"):
       st.badge(f"This Car has an average Price",
                           icon=":material/check:",color="yellow")
 
-    if milage_diff < 50: 
-      st.badge(f"This Car's Mileage is lower than %{milage_diff} of the similar ads",
+    if milage_diff is None:
+      st.badge(f"This Car's Mileage is Zero",
                     icon=":material/done_all:",color="green")
-    elif 40 < milage_diff < 50:
+
+    elif milage_diff > 50: 
+      st.badge(f"This Car's Mileage is lower than %{milage_diff} of the similar ads",
+                    icon=":material/check:",color="green")
+    elif 40 < milage_diff < 60:
       st.badge(f"This Car has an average Mileage",
                           icon=":material/check:",color="yellow")
     else:
-      st.badge(f"This Car's Milage is higher than %{milage_diff} of the similar ads",
+      st.badge(f"This Car's Milage is higher than %{100 - milage_diff} of the similar ads",
                     icon=":material/warning:",color="red")
       
   df = pd.DataFrame([ad], columns=["id", "model", "year", "milage", "price",

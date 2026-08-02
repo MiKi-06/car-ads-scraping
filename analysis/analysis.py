@@ -81,24 +81,28 @@ class Analyzer:
     total_ads = len(ads)
     count = 0
     if ad["price"] == 0:
-      return None
-    for row in ads:
-      if row["price"] > ad["price"]:
-        count += 1
-    if count > 0:
-      price_diff = round(((count / total_ads) * 100), None)
+      price_diff = None
     else:
-      price_diff = 0
+      for row in ads:
+        if row["price"] > ad["price"]:
+          count += 1
+      if count > 0:
+        price_diff = round(((count / total_ads) * 100), None)
+      else:
+        price_diff = 0
 
     count = 0
-    for row in ads:
-      if row["milage"] > ad["milage"]:
-        count += 1
-
-    if count > 0:
-      milage_diff = round(((count / total_ads) * 100), None)
+    if ad["milage"] == 0:
+      milage_diff = None
     else:
-      milage_diff = 0
+      for row in ads:
+        if row["milage"] > ad["milage"]:
+          count += 1
+
+      if count > 0:
+        milage_diff = round(((count / total_ads) * 100), None)
+      else:
+        milage_diff = 0
 
     return {"price_diff": price_diff,
             "milage_diff": milage_diff}
